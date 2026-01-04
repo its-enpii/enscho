@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      Role     @default(STUDENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts     Post[]
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+  ALUMNI
+}
+
+// Global Configuration (Singleton pattern ideally)
+model SchoolConfig {
+  id          String   @id @default("config")
+  name        String   @default("SMK Enscho")
+  phone       String?
+  email       String?
+  address     String?  @db.Text
+  facebook    String? // Deprecated
+  instagram   String? // Deprecated
+  youtube     String? // Deprecated
+  tiktok      String? // Deprecated
+  socialMedia Json?   // New flexible configuration
+  
+  logoUrl     String? // For site logo
+  bannerUrl   String? // For main site banner/hero background if slides are empty
+  tagline     String? // School motto or welcome text
+  footerDescription String? @db.Text // Description shown in footer
+  primaryColor String? @default("#2563eb") // Default to blue-600
+  openingHours String? @db.Text // e.g. "Senin - Jumat: 07:00 - 16:00\nSabtu: 07:00 - 12:00"
+  
+  // Welcome Section & Stats
+  welcomeTitle       String? // e.g "Mencetak Generasi Juara"
+  welcomeDescription String? @db.Text // Short welcome text
+  
+  statsStudents      String? // e.g "1200+"
+  statsTeachers      String? // e.g "85"
+  statsPartners      String? // e.g "50+"
+
+  updatedAt   DateTime @updatedAt
+}
+
+// For static pages like 'visi-misi', 'sejarah', 'sambutan'
+model Page {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  content   String   @db.LongText
+  updatedAt DateTime @updatedAt
+}
+
+model HeroSlide {
+  id        String   @id @default(cuid())
+  title     String?
+  subtitle  String?
+  imageUrl  String
+  link      String?
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+}
+
+model Major {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String   @db.Text
+  content     String?  @db.LongText
+  imageUrl    String?
+  
+  // New detailed fields
+  careerProspects String? @db.Text  // Stored as newline separated items
+  competencies    String? @db.Text  // Stored as newline separated items
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// For Guru & Staf
+model Employee {
+  id        String   @id @default(cuid())
+  name      String
+  position  String?
+  category  String   // 'GURU', 'STAF', 'KEPSEK'
+  imageUrl  String?
+  order     Int      @default(0)
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  content   String   @db.LongText
+  excerpt   String?  @db.Text
+  category  String   // 'news', 'article', 'agenda', 'loker'
+  imageUrl  String?
+  published Boolean  @default(false)
+  authorId  String?
+  author    User?    @relation(fields: [authorId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Partner {
+  id        String   @id @default(cuid())
+  name      String
+  logoUrl   String?
+  website   String?
+  createdAt DateTime @default(now())
+}
+
+model Gallery {
+  id        String   @id @default(cuid())
+  title     String?
+  imageUrl  String
+  category  String?
+  createdAt DateTime @default(now())
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  title     String
+  fileUrl   String
+  size      String?
+  category  String   @default("akademik")
+  createdAt DateTime @default(now())
+}
+
+model AcademicFeature {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  icon        String   // Storing icon name e.g., "Calendar", "Book"
+  actionText  String
+  href        String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+}
