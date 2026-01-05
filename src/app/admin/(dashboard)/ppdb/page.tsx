@@ -1,14 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import Link from "next/link";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Eye, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { UserPlus, Clock, CheckCircle2, XCircle } from "lucide-react";
+import PPDBTable from "./_components/PPDBTable";
 
 export const dynamic = "force-dynamic";
 
@@ -20,102 +12,97 @@ export default async function PPDBAdminPage() {
     },
   });
 
+  const stats = {
+    total: registrations.length,
+    pending: registrations.filter((r) => r.status === "PENDING").length,
+    verified: registrations.filter((r) => r.status === "VERIFIED").length,
+    accepted: registrations.filter((r) => r.status === "ACCEPTED").length,
+    rejected: registrations.filter((r) => r.status === "REJECTED").length,
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800">
+    <div>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-slate-900">
           Data Pendaftaran Siswa Baru (PPDB)
         </h1>
+        <p className="text-sm text-slate-500 mt-1">
+          Kelola dan verifikasi pendaftaran calon siswa baru
+        </p>
       </div>
 
-      <div className="bg-white rounded-lg shadow border overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>No. Daftar</TableHead>
-              <TableHead>Nama Lengkap</TableHead>
-              <TableHead>Asal Sekolah</TableHead>
-              <TableHead>Jurusan 1</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Tanggal</TableHead>
-              <TableHead className="text-right">Aksi</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {registrations.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="text-center py-8 text-gray-500"
-                >
-                  Belum ada data pendaftaran.
-                </TableCell>
-              </TableRow>
-            ) : (
-              registrations.map((reg) => (
-                <TableRow key={reg.id}>
-                  <TableCell className="font-mono text-sm">
-                    {reg.registrationNo}
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {reg.namaLengkap}
-                  </TableCell>
-                  <TableCell>{reg.asalSekolah}</TableCell>
-                  <TableCell>{reg.pilihanJurusan1?.name}</TableCell>
-                  <TableCell>
-                    <StatusBadge status={reg.status} />
-                  </TableCell>
-                  <TableCell>
-                    {new Date(reg.createdAt).toLocaleDateString("id-ID", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Link
-                      href={`/admin/ppdb/${reg.id}`}
-                      className="inline-flex items-center justify-center p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
-                      title="Lihat Detail"
-                    >
-                      <Eye size={18} />
-                    </Link>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+        <div className="bg-white p-4 rounded-xl border border-slate-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+              <UserPlus size={24} className="text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-slate-500 font-medium">
+                Total Pendaftar
+              </p>
+              <p className="text-2xl font-bold text-slate-900">{stats.total}</p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white p-4 rounded-xl border border-slate-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg">
+              <Clock size={24} className="text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-slate-500 font-medium">Menunggu</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {stats.pending}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white p-4 rounded-xl border border-slate-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
+              <CheckCircle2 size={24} className="text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-slate-500 font-medium">
+                Terverifikasi
+              </p>
+              <p className="text-2xl font-bold text-slate-900">
+                {stats.verified}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white p-4 rounded-xl border border-slate-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+              <CheckCircle2 size={24} className="text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-slate-500 font-medium">Diterima</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {stats.accepted}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white p-4 rounded-xl border border-slate-200 hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+              <XCircle size={24} className="text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-slate-500 font-medium">Ditolak</p>
+              <p className="text-2xl font-bold text-slate-900">
+                {stats.rejected}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <PPDBTable registrations={registrations} />
     </div>
-  );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const styles = {
-    PENDING: "bg-yellow-100 text-yellow-800 border-yellow-200",
-    VERIFIED: "bg-blue-100 text-blue-800 border-blue-200",
-    ACCEPTED: "bg-green-100 text-green-800 border-green-200",
-    REJECTED: "bg-red-100 text-red-800 border-red-200",
-  };
-
-  const icons = {
-    PENDING: Clock,
-    VERIFIED: CheckCircle2,
-    ACCEPTED: CheckCircle2,
-    REJECTED: XCircle,
-  };
-
-  const Icon = icons[status as keyof typeof icons] || Clock;
-
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-        styles[status as keyof typeof styles] || "bg-gray-100 text-gray-800"
-      }`}
-    >
-      <Icon size={12} />
-      {status}
-    </span>
   );
 }

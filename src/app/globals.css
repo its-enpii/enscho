@@ -123,18 +123,164 @@ body {
   line-height: 1.25;
 }
 
-/* Global Form Input Styles */
-input,
+/* Global Form Input Styles - Minimal to avoid conflicts with Tailwind */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="url"],
+input[type="tel"],
+input[type="search"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
 select,
 textarea {
-  color: #111827 !important; /* gray-900 */
+  color: #111827 !important; /* gray-900 - dark text */
+  background-color: #ffffff !important; /* white background */
+  border-color: #d1d5db !important; /* gray-300 border */
+  /* Let Tailwind handle: padding, border-radius, font-size, etc */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="url"]:focus,
+input[type="tel"]:focus,
+input[type="search"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="datetime-local"]:focus,
+select:focus,
+textarea:focus {
+  outline: none !important;
+  border-color: #3b82f6 !important; /* blue-500 */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
 }
 
 input::placeholder,
 textarea::placeholder {
   color: #9ca3af !important; /* gray-400 */
+  opacity: 1;
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background-color: #f3f4f6 !important; /* gray-100 */
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 label {
-  color: #111827; /* gray-900 default for labels */
+  color: #374151; /* gray-700 for labels */
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+}
+
+/* Quill Editor Specific Styles */
+.ql-toolbar.ql-snow {
+  border: 1px solid #e5e7eb !important; /* gray-200 */
+  border-bottom: none !important;
+  background-color: #f9fafb !important; /* gray-50 */
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  padding: 0.75rem !important;
+}
+
+.ql-container.ql-snow {
+  border: 1px solid #e5e7eb !important; /* gray-200 */
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  background-color: #ffffff !important;
+  font-family: inherit;
+}
+
+.ql-editor {
+  min-height: 300px;
+  font-size: 1rem !important;
+  line-height: 1.75 !important;
+  color: #111827 !important; /* gray-900 - dark text for content */
+  padding: 1rem !important;
+}
+
+.ql-editor.ql-blank::before {
+  color: #9ca3af !important; /* gray-400 for placeholder */
+  font-style: italic;
+  opacity: 1;
+}
+
+.ql-editor p,
+.ql-editor ol,
+.ql-editor ul,
+.ql-editor pre,
+.ql-editor blockquote,
+.ql-editor h1,
+.ql-editor h2,
+.ql-editor h3,
+.ql-editor h4,
+.ql-editor h5,
+.ql-editor h6 {
+  color: #111827 !important; /* Ensure all text is dark */
+}
+
+.ql-snow .ql-stroke {
+  stroke: #6b7280 !important; /* gray-500 for toolbar icons */
+}
+
+.ql-snow .ql-fill {
+  fill: #6b7280 !important;
+}
+
+.ql-snow .ql-picker-label {
+  color: #374151 !important; /* gray-700 */
+}
+
+.ql-snow .ql-picker-options {
+  background-color: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.ql-toolbar button:hover,
+.ql-toolbar button:focus,
+.ql-toolbar button.ql-active {
+  color: #3b82f6 !important; /* blue-500 */
+}
+
+.ql-toolbar button:hover .ql-stroke,
+.ql-toolbar button:focus .ql-stroke,
+.ql-toolbar button.ql-active .ql-stroke {
+  stroke: #3b82f6 !important;
+}
+
+.ql-toolbar button:hover .ql-fill,
+.ql-toolbar button:focus .ql-fill,
+.ql-toolbar button.ql-active .ql-fill {
+  fill: #3b82f6 !important;
+}
+
+/* Quill Snow Theme Tooltip */
+.ql-snow .ql-tooltip {
+  background-color: #1f2937 !important; /* gray-800 */
+  border: none !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  color: #ffffff !important;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+}
+
+.ql-snow .ql-tooltip input[type="text"] {
+  background-color: #374151 !important; /* gray-700 */
+  border: 1px solid #4b5563 !important; /* gray-600 */
+  color: #ffffff !important;
+}
+
+.ql-snow .ql-tooltip a {
+  color: #60a5fa !important; /* blue-400 */
 }

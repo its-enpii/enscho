@@ -83,25 +83,29 @@ export function FeatureForm({ initialData }: FeatureFormProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-700">Judul</label>
+          <label className="block text-sm font-medium text-slate-700">
+            Judul <span className="text-red-500">*</span>
+          </label>
           <input
             {...form.register("title")}
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full px-4 py-2.5 border border-slate-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
             placeholder="Contoh: Kurikulum Merdeka"
           />
           {form.formState.errors.title && (
-            <p className="text-red-500 text-xs">
+            <p className="text-red-500 text-xs mt-1">
               {form.formState.errors.title.message}
             </p>
           )}
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-700">Urutan</label>
+          <label className="block text-sm font-medium text-slate-700">
+            Urutan
+          </label>
           <input
             type="number"
             {...form.register("order")}
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none block"
+            className="w-full px-4 py-2.5 border border-slate-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
           />
           <p className="text-xs text-slate-500">
             Urutan tampilan (kecil ke besar)
@@ -109,37 +113,37 @@ export function FeatureForm({ initialData }: FeatureFormProps) {
         </div>
 
         <div className="col-span-full space-y-2">
-          <label className="text-sm font-medium text-slate-700">
-            Deskripsi
+          <label className="block text-sm font-medium text-slate-700">
+            Deskripsi <span className="text-red-500">*</span>
           </label>
           <textarea
             {...form.register("description")}
             rows={4}
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none block"
+            className="w-full px-4 py-2.5 border border-slate-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
             placeholder="Jelaskan keunggulan ini..."
           />
           {form.formState.errors.description && (
-            <p className="text-red-500 text-xs">
+            <p className="text-red-500 text-xs mt-1">
               {form.formState.errors.description.message}
             </p>
           )}
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-700">
-            Icon (Lucide React Name)
+          <label className="block text-sm font-medium text-slate-700">
+            Icon (Lucide React) <span className="text-red-500">*</span>
           </label>
           <div className="flex gap-2">
             <input
               {...form.register("icon")}
-              className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="flex-1 px-4 py-2.5 border border-slate-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
               placeholder="Contoh: Award, Book, Users"
             />
             <a
               href="https://lucide.dev/icons"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-2 bg-slate-100 text-slate-600 rounded-lg text-sm hover:bg-slate-200"
+              className="px-4 py-2.5 bg-slate-100 text-slate-700 rounded-lg text-sm hover:bg-slate-200 transition-colors font-medium border border-slate-200"
             >
               Cari Icon
             </a>
@@ -151,26 +155,36 @@ export function FeatureForm({ initialData }: FeatureFormProps) {
             // @ts-ignore
             const IconPreview = Icons[iconName];
             return IconPreview ? (
-              <div className="flex items-center gap-2 mt-2 text-sm text-green-600">
-                <IconPreview size={18} /> Icon ditemukan: {iconName}
+              <div className="flex items-center gap-2 mt-2 px-3 py-2 bg-green-50 border border-green-200 rounded-lg">
+                <IconPreview size={20} className="text-green-600" />
+                <span className="text-sm text-green-700 font-medium">
+                  Icon ditemukan: {iconName}
+                </span>
               </div>
             ) : (
               iconName && (
-                <div className="text-sm text-red-500 mt-2">
-                  Icon tidak valid
+                <div className="px-3 py-2 bg-red-50 border border-red-200 rounded-lg">
+                  <span className="text-sm text-red-600 font-medium">
+                    Icon tidak valid: {iconName}
+                  </span>
                 </div>
               )
             );
           })()}
+          {form.formState.errors.icon && (
+            <p className="text-red-500 text-xs mt-1">
+              {form.formState.errors.icon.message}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-700">
-            Warna Tema
+          <label className="block text-sm font-medium text-slate-700">
+            Warna Tema <span className="text-red-500">*</span>
           </label>
           <select
             {...form.register("color")}
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none block bg-white"
+            className="w-full px-4 py-2.5 border border-slate-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
           >
             {colors.map((c) => (
               <option key={c.value} value={c.value}>

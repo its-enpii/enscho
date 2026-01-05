@@ -62,6 +62,10 @@ export const NAVIGATION_MENU = [
   {
     label: "Galeri & Berita",
     href: "/berita",
+    children: [
+      { label: "Galeri Foto", href: "/galeri" },
+      { label: "Berita & Artikel", href: "/berita" },
+    ],
   },
   {
     label: "Kontak",
