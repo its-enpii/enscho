@@ -1,5 +1,17 @@
 import Link from "next/link";
-import { LayoutDashboard, BookOpen, FileText, Settings, Image as ImageIcon, Users, LogOut, Building2, GraduationCap } from "lucide-react";
+import {
+  LayoutDashboard,
+  BookOpen,
+  FileText,
+  Settings,
+  Image as ImageIcon,
+  Users,
+  LogOut,
+  Building2,
+  GraduationCap,
+  ClipboardList,
+  Award,
+} from "lucide-react";
 
 export default function AdminLayout({
   children,
@@ -13,19 +25,49 @@ export default function AdminLayout({
         <div className="p-6 border-b border-slate-800">
           <h1 className="text-xl font-bold text-white">SMK Enscho Admin</h1>
         </div>
-        
+
         <nav className="flex-1 p-4 space-y-1">
           <NavItem href="/admin" icon={LayoutDashboard} label="Dashboard" />
-          <NavItem href="/admin/config" icon={Settings} label="Konfigurasi Sekolah" />
-          <NavItem href="/admin/pages" icon={FileText} label="Halaman (Visi Misi)" />
+          <NavItem
+            href="/admin/ppdb"
+            icon={ClipboardList}
+            label="PPDB / Pendaftaran"
+          />
+          <NavItem
+            href="/admin/config"
+            icon={Settings}
+            label="Konfigurasi Sekolah"
+          />
+          <NavItem
+            href="/admin/pages"
+            icon={FileText}
+            label="Halaman (Visi Misi)"
+          />
+          <NavItem href="/admin/features" icon={Award} label="Keunggulan" />
           <NavItem href="/admin/jurusan" icon={BookOpen} label="Jurusan" />
-          <NavItem href="/admin/akademik" icon={GraduationCap} label="Akademik" />
-          <NavItem href="/admin/posts" icon={FileText} label="Berita & Artikel" />
-          <NavItem href="/admin/mitra" icon={Building2} label="Mitra Industri" />
+          <NavItem
+            href="/admin/akademik"
+            icon={GraduationCap}
+            label="Akademik"
+          />
+          <NavItem
+            href="/admin/posts"
+            icon={FileText}
+            label="Berita & Artikel"
+          />
+          <NavItem
+            href="/admin/mitra"
+            icon={Building2}
+            label="Mitra Industri"
+          />
           <NavItem href="/admin/documents" icon={FileText} label="Dokumen" />
           <NavItem href="/admin/gallery" icon={ImageIcon} label="Galeri" />
           <NavItem href="/admin/users" icon={Users} label="Pengguna" />
-          <NavItem href="/admin/employees" icon={GraduationCap} label="Guru & Staf" />
+          <NavItem
+            href="/admin/employees"
+            icon={GraduationCap}
+            label="Guru & Staf"
+          />
         </nav>
 
         <div className="p-4 border-t border-slate-800">
@@ -37,16 +79,25 @@ export default function AdminLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 p-8">
-        {children}
-      </main>
+      <main className="flex-1 ml-64 p-8">{children}</main>
     </div>
   );
 }
 
-function NavItem({ href, icon: Icon, label }: { href: string; icon: any; label: string }) {
+function NavItem({
+  href,
+  icon: Icon,
+  label,
+}: {
+  href: string;
+  icon: any;
+  label: string;
+}) {
   return (
-    <Link href={href} className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-slate-800 hover:text-white transition-colors">
+    <Link
+      href={href}
+      className="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-slate-800 hover:text-white transition-colors"
+    >
       <Icon size={20} />
       <span>{label}</span>
     </Link>

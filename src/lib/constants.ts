@@ -16,7 +16,7 @@ export const SCHOOL_INFO = {
   footerDescription: null,
   primaryColor: "#2563eb", // blue-600
   openingHours: "Senin - Jumat: 07:00 - 16:00\nSabtu: 07:00 - 12:00",
-  
+
   welcomeTitle: null,
   welcomeDescription: null,
   statsStudents: null,
@@ -31,7 +31,8 @@ export const NAVIGATION_MENU = [
     href: "/profil",
     children: [
       { label: "Sambutan Kepala Sekolah", href: "/profil/sambutan" },
-      { label: "Sejarah, Visi & Misi", href: "/profil/visi-misi" },
+      { label: "Sejarah", href: "/profil/sejarah" },
+      { label: "Visi & Misi", href: "/profil/visi-misi" },
       { label: "Struktur Organisasi", href: "/profil/struktur" },
       { label: "Guru & Staf", href: "/profil/guru" },
       { label: "Sarana & Prasarana", href: "/profil/sarpras" },

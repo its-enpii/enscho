@@ -34,10 +34,10 @@
   --primary-200: color-mix(in srgb, var(--primary-color), white 80%);
   --primary-300: color-mix(in srgb, var(--primary-color), white 60%);
   --primary-400: color-mix(in srgb, var(--primary-color), white 30%);
-  
+
   --primary-500: color-mix(in srgb, var(--primary-color), white 10%);
   --primary-600: var(--primary-color);
-  
+
   --primary-700: color-mix(in srgb, var(--primary-color), black 10%);
   --primary-800: color-mix(in srgb, var(--primary-color), black 30%);
   --primary-900: color-mix(in srgb, var(--primary-color), black 50%);
@@ -77,15 +77,16 @@ body {
   hyphens: auto;
 }
 
-.prose p, .prose li {
+.prose p,
+.prose li {
   margin-bottom: 1.25em; /* Fix for "auto enter" spacing */
   line-height: 1.75;
   white-space: normal !important;
   overflow-wrap: break-word !important;
 }
 
-.prose img, 
-.prose video, 
+.prose img,
+.prose video,
 .prose iframe {
   max-width: 100% !important; /* Force fit container */
   height: auto;
@@ -98,7 +99,8 @@ body {
   word-break: break-all; /* Force break for long links */
 }
 
-.prose ul, .prose ol {
+.prose ul,
+.prose ol {
   margin-bottom: 1.25em;
   padding-left: 1.5em;
 }
@@ -111,9 +113,28 @@ body {
   list-style-type: decimal;
 }
 
-.prose h1, .prose h2, .prose h3, .prose h4 {
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
   margin-top: 1.5em;
   margin-bottom: 0.75em;
   font-weight: 700;
   line-height: 1.25;
+}
+
+/* Global Form Input Styles */
+input,
+select,
+textarea {
+  color: #111827 !important; /* gray-900 */
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #9ca3af !important; /* gray-400 */
+}
+
+label {
+  color: #111827; /* gray-900 default for labels */
 }

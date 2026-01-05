@@ -89,6 +89,10 @@ model Major {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  // Relations
+  registrations1 StudentRegistration[] @relation("Jurusan1")
+  registrations2 StudentRegistration[] @relation("Jurusan2")
 }
 
 // For Guru & Staf
@@ -150,4 +154,111 @@ model AcademicFeature {
   href        String
   order       Int      @default(0)
   createdAt   DateTime @default(now())
+}
+
+model SchoolFeature {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  icon        String
+  color       String   @default("blue")
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model StudentRegistration {
+  id              String   @id @default(cuid())
+  registrationNo  String   @unique // Auto-generated e.g., PPDB-2024-001
+  
+  // 1. Informasi Pendaftaran
+  jalurPendaftaran String // e.g. "Reguler", "Prestasi"
+  
+  // Relations for Majors
+  pilihanJurusan1Id String
+  pilihanJurusan1   Major @relation("Jurusan1", fields: [pilihanJurusan1Id], references: [id])
+  
+  pilihanJurusan2Id String?
+  pilihanJurusan2   Major? @relation("Jurusan2", fields: [pilihanJurusan2Id], references: [id])
+
+  asalSekolah     String
+  alamatSekolah   String? @db.Text
+  
+  // 2. Data Pribadi
+  nisn            String?
+  namaLengkap     String
+  jenisKelamin    String   // L/P
+  nik             String
+  noKk            String?
+  tempatLahir     String
+  tanggalLahir    DateTime
+  agama           String
+  
+  // Alamat Lengkap
+  alamatJalan     String? @db.Text
+  rt              String?
+  rw              String?
+  dusun           String?
+  desaKelurahan   String?
+  kecamatan       String?
+  kabupatenKota   String?
+  provinsi        String?
+  kodePos         String?
+  
+  noHp            String
+  email           String?
+  
+  // KIP/KIS (Optional)
+  noKip           String?
+  noKis           String?
+  
+  // 3. Data Orang Tua / Wali
+  namaAyah        String
+  nikAyah         String?
+  tahunLahirAyah  String?
+  pendidikanAyah  String?
+  pekerjaanAyah   String?
+  penghasilanAyah String?
+  noHpAyah        String?
+  
+  namaIbu         String
+  nikIbu          String?
+  tahunLahirIbu   String?
+  pendidikanIbu   String?
+  pekerjaanIbu    String?
+  penghasilanIbu  String?
+  noHpIbu         String?
+  
+  namaWali        String?
+  pekerjaanWali   String?
+  penghasilanWali String?
+  noHpWali        String?
+  
+  // 4. Data Periodik / Fisik
+  tinggiBadan     Float? // cm
+  beratBadan      Float? // kg
+  jumlahSaudara   Int?
+  
+  // Distance & Transport
+  jarakKeSekolah  String? // "Kurang dari 1 km" | "Lebih dari 1 km"
+  jarakKm         Float?  // Input: km
+  waktuTempuh     String? // Input: "JJ:MM"
+  transportasi    String? // Input: "Jalan Kaki", "Motor", etc.
+  
+  // Documents (URLs)
+  fotoUrl         String? // Pas Foto with Preview in UI
+  
+  // System
+  status          RegistrationStatus @default(PENDING)
+  notes           String? @db.Text // Admin notes
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+enum RegistrationStatus {
+  PENDING
+  VERIFIED
+  ACCEPTED
+  REJECTED
 }
