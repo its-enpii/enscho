@@ -23,15 +23,9 @@ interface HeroSlide {
 
 interface HeroSectionProps {
   slides: HeroSlide[];
-  fallbackBanner?: string | null;
-  tagline?: string | null;
 }
 
-export function HeroSection({
-  slides,
-  fallbackBanner,
-  tagline,
-}: HeroSectionProps) {
+export function HeroSection({ slides }: HeroSectionProps) {
   const [current, setCurrent] = useState(0);
 
   // Auto-play
@@ -66,11 +60,8 @@ export function HeroSection({
           {
             id: "default",
             title: "Selamat Datang di SMK Enscho",
-            subtitle:
-              tagline ||
-              "Mewujudkan Generasi Unggul, Berkarakter, dan Siap Kerja",
+            subtitle: "Mewujudkan Generasi Unggul, Berkarakter, dan Siap Kerja",
             imageUrl:
-              fallbackBanner ||
               "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2000&auto=format&fit=crop",
             link: null,
           },

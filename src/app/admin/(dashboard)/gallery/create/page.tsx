@@ -7,8 +7,14 @@ import GalleryForm from "../_components/GalleryForm";
 import { writeFile } from "fs/promises";
 import path from "path";
 
+import { cookies } from "next/headers";
+
 async function createGalleryItem(formData: FormData) {
   "use server";
+
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
+  const authorId = session ? session.split(":")[0] : null;
 
   const title = formData.get("title") as string;
   const category = formData.get("category") as string;
@@ -35,7 +41,7 @@ async function createGalleryItem(formData: FormData) {
   const imageUrl = `/uploads/gallery/${filename}`;
 
   await prisma.gallery.create({
-    data: { title, imageUrl, category },
+    data: { title, imageUrl, category, authorId },
   });
 
   revalidatePath("/admin/gallery");

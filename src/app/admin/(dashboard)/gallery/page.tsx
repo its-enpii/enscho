@@ -5,17 +5,40 @@ import GalleryTable from "./_components/GalleryTable";
 import { revalidatePath } from "next/cache";
 import { unlink } from "fs/promises";
 import path from "path";
+import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
 async function deleteGalleryItem(id: string) {
   "use server";
 
-  // Get item to delete file
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
+  const adminSession = cookieStore.get("admin_session")?.value;
+
+  if (!session && !adminSession) {
+    throw new Error("Unauthorized");
+  }
+
+  const [currentUserId, currentRole] = session
+    ? session.split(":")
+    : ["", "ADMIN"];
+  const canManageAll =
+    currentRole === "ADMIN" ||
+    currentRole === "TEACHER" ||
+    currentRole === "ALUMNI" ||
+    !!adminSession;
+
+  // Get item to delete file and check ownership
   const item = await prisma.gallery.findUnique({
     where: { id },
-    select: { imageUrl: true },
+    select: { imageUrl: true, authorId: true },
   });
+
+  if (!item) throw new Error("Item not found");
+  if (!canManageAll && item.authorId !== currentUserId) {
+    throw new Error("You do not have permission to delete this item");
+  }
 
   // Delete from database
   await prisma.gallery.delete({ where: { id } });
@@ -34,8 +57,30 @@ async function deleteGalleryItem(id: string) {
 }
 
 export default async function AdminGalleryPage() {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
+  const adminSession = cookieStore.get("admin_session")?.value;
+
+  let currentUserId = "";
+  let currentRole = "ADMIN";
+
+  if (session) {
+    [currentUserId, currentRole] = session.split(":");
+  } else if (!adminSession) {
+    // Should not happen due to middleware, but for safety
+    return null;
+  }
+
   const items = await prisma.gallery.findMany({
     orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      title: true,
+      imageUrl: true,
+      category: true,
+      createdAt: true,
+      authorId: true,
+    },
   });
 
   const stats = {
@@ -45,13 +90,17 @@ export default async function AdminGalleryPage() {
 
   // Get category counts
   const categoryCounts = items.reduce((acc, item) => {
-    acc[item.category] = (acc[item.category] || 0) + 1;
+    const cat = item.category || "Uncategorized";
+    acc[cat] = (acc[cat] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
   const topCategories = Object.entries(categoryCounts)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 3);
+
+  const canManageAll =
+    currentRole === "ADMIN" || currentRole === "TEACHER" || !!adminSession;
 
   return (
     <div>
@@ -123,7 +172,12 @@ export default async function AdminGalleryPage() {
         ))}
       </div>
 
-      <GalleryTable items={items as any} onDelete={deleteGalleryItem} />
+      <GalleryTable
+        items={items as any}
+        onDelete={deleteGalleryItem}
+        currentUserId={currentUserId}
+        canManageAll={canManageAll}
+      />
     </div>
   );
 }

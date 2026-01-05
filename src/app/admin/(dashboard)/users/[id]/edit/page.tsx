@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Save } from "lucide-react";
 import { notFound } from "next/navigation";
+import bcrypt from "bcryptjs";
 
 export default async function EditUserPage({
   params,
@@ -28,6 +29,10 @@ export default async function EditUserPage({
     const name = formData.get("name") as string;
     const role = formData.get("role") as string;
 
+    if (!user) {
+      throw new Error("Pengguna tidak ditemukan");
+    }
+
     // Check if email is taken by another user
     if (email !== user.email) {
       const existing = await prisma.user.findUnique({
@@ -47,7 +52,7 @@ export default async function EditUserPage({
 
     // Only update password if provided
     if (password && password.trim() !== "") {
-      updateData.password = password;
+      updateData.password = await bcrypt.hash(password, 10);
     }
 
     await prisma.user.update({
@@ -158,20 +163,12 @@ export default async function EditUserPage({
         </div>
       </form>
 
-      <div className="mt-6 p-4 bg-slate-50 border border-slate-200 rounded-lg">
-        <div className="text-sm text-slate-600 space-y-1">
-          <p>
-            <strong>User ID:</strong> {user.id}
-          </p>
-          <p>
-            <strong>Terdaftar:</strong>{" "}
-            {new Date(user.createdAt).toLocaleString("id-ID")}
-          </p>
-          <p>
-            <strong>Terakhir Diupdate:</strong>{" "}
-            {new Date(user.updatedAt).toLocaleString("id-ID")}
-          </p>
-        </div>
+      <div className="mt-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+        <p className="text-sm text-emerald-800">
+          <strong>Catatan Keamanan:</strong> Password kini disimpan dalam bentuk
+          hash (bcrypt) yang aman. Password yang Anda masukkan di sini akan
+          otomatis dienkripsi sebelum disimpan ke database.
+        </p>
       </div>
     </div>
   );

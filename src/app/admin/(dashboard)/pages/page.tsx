@@ -3,16 +3,43 @@ import { Plus, FileText } from "lucide-react";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import PagesTable from "./_components/PagesTable";
+import { cookies } from "next/headers";
 
 export default async function AdminPagesList() {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
+  const adminSession = cookieStore.get("admin_session")?.value;
+
+  let currentUserId = "";
+  let currentRole = "ADMIN";
+
+  if (session) {
+    [currentUserId, currentRole] = session.split(":");
+  } else if (!adminSession) {
+    return null;
+  }
+
   const pages = await prisma.page.findMany({
     where: {
       slug: {
         notIn: ["akademik-landing"],
       },
     },
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      updatedAt: true,
+      authorId: true,
+    },
     orderBy: { updatedAt: "desc" },
   });
+
+  const canManageAll =
+    currentRole === "ADMIN" ||
+    currentRole === "TEACHER" ||
+    currentRole === "ALUMNI" ||
+    !!adminSession;
 
   const PROTECTED_SLUGS = [
     "sambutan",
@@ -27,10 +54,20 @@ export default async function AdminPagesList() {
     "use server";
     try {
       const page = await prisma.page.findUnique({ where: { id } });
-      if (page && PROTECTED_SLUGS.includes(page.slug)) {
+      if (!page) throw new Error("Halaman tidak ditemukan");
+
+      if (PROTECTED_SLUGS.includes(page.slug)) {
         return {
           success: false,
           error: "Halaman ini dilindungi dan tidak dapat dihapus.",
+        };
+      }
+
+      // Authorization check
+      if (!canManageAll && page.authorId !== currentUserId) {
+        return {
+          success: false,
+          error: "Anda tidak memiliki akses untuk menghapus halaman ini.",
         };
       }
 
@@ -111,9 +148,11 @@ export default async function AdminPagesList() {
       </div>
 
       <PagesTable
-        pages={pages}
+        pages={pages as any}
         protectedSlugs={PROTECTED_SLUGS}
         onDelete={deletePage}
+        currentUserId={currentUserId}
+        canManageAll={canManageAll}
       />
     </div>
   );

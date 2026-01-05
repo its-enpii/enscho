@@ -9,18 +9,23 @@ interface Page {
   title: string;
   slug: string;
   updatedAt: Date;
+  authorId?: string | null;
 }
 
 interface PagesTableProps {
   pages: Page[];
   protectedSlugs: string[];
   onDelete: (id: string) => Promise<{ success: boolean; error?: string }>;
+  currentUserId: string;
+  canManageAll: boolean;
 }
 
 export default function PagesTable({
   pages,
   protectedSlugs,
   onDelete,
+  currentUserId,
+  canManageAll,
 }: PagesTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -144,56 +149,65 @@ export default function PagesTable({
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-end gap-2">
-                          <Link
-                            href={`/admin/pages/${page.id}/edit`}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                              />
-                            </svg>
-                          </Link>
-                          {!isProtected && (
-                            <button
-                              onClick={async () => {
-                                if (
-                                  confirm(
-                                    `Yakin ingin menghapus "${page.title}"?`
-                                  )
-                                ) {
-                                  const result = await onDelete(page.id);
-                                  if (!result.success) {
-                                    alert(
-                                      result.error || "Gagal menghapus halaman"
-                                    );
-                                  }
-                                }
-                              }}
-                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            >
-                              <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
+                          {canManageAll || page.authorId === currentUserId ? (
+                            <>
+                              <Link
+                                href={`/admin/pages/${page.id}/edit`}
+                                className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                               >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                />
-                              </svg>
-                            </button>
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                  />
+                                </svg>
+                              </Link>
+                              {!isProtected && (
+                                <button
+                                  onClick={async () => {
+                                    if (
+                                      confirm(
+                                        `Yakin ingin menghapus "${page.title}"?`
+                                      )
+                                    ) {
+                                      const result = await onDelete(page.id);
+                                      if (!result.success) {
+                                        alert(
+                                          result.error ||
+                                            "Gagal menghapus halaman"
+                                        );
+                                      }
+                                    }
+                                  }}
+                                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                >
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                    />
+                                  </svg>
+                                </button>
+                              )}
+                            </>
+                          ) : (
+                            <span className="text-xs text-slate-400 font-medium px-2 py-1 bg-slate-50 rounded-md">
+                              View Only
+                            </span>
                           )}
                         </div>
                       </td>

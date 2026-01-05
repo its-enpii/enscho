@@ -17,15 +17,23 @@ interface Post {
   category: string;
   published: boolean;
   createdAt: Date;
+  authorId?: string | null;
   author: { name: string | null } | null;
 }
 
 interface PostsTableProps {
   posts: Post[];
   onDelete: (formData: FormData) => Promise<void>;
+  currentUserId: string;
+  canManageAll: boolean;
 }
 
-export default function PostsTable({ posts, onDelete }: PostsTableProps) {
+export default function PostsTable({
+  posts,
+  onDelete,
+  currentUserId,
+  canManageAll,
+}: PostsTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
@@ -211,56 +219,64 @@ export default function PostsTable({ posts, onDelete }: PostsTableProps) {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex justify-end gap-2">
-                        <Link
-                          href={`/admin/posts/${post.id}/edit`}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="Edit"
-                        >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                            />
-                          </svg>
-                        </Link>
-                        <form action={onDelete}>
-                          <input type="hidden" name="id" value={post.id} />
-                          <button
-                            type="submit"
-                            onClick={(e) => {
-                              if (
-                                !confirm(
-                                  `Yakin ingin menghapus "${post.title}"?`
-                                )
-                              ) {
-                                e.preventDefault();
-                              }
-                            }}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Hapus"
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                        {canManageAll || post.authorId === currentUserId ? (
+                          <>
+                            <Link
+                              href={`/admin/posts/${post.id}/edit`}
+                              className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                              title="Edit"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                              />
-                            </svg>
-                          </button>
-                        </form>
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                />
+                              </svg>
+                            </Link>
+                            <form action={onDelete}>
+                              <input type="hidden" name="id" value={post.id} />
+                              <button
+                                type="submit"
+                                onClick={(e) => {
+                                  if (
+                                    !confirm(
+                                      `Yakin ingin menghapus "${post.title}"?`
+                                    )
+                                  ) {
+                                    e.preventDefault();
+                                  }
+                                }}
+                                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                title="Hapus"
+                              >
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
+                                </svg>
+                              </button>
+                            </form>
+                          </>
+                        ) : (
+                          <span className="text-xs text-slate-400 font-medium px-2 py-1 bg-slate-50 rounded-md">
+                            View Only
+                          </span>
+                        )}
                       </div>
                     </td>
                   </tr>

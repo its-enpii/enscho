@@ -23,20 +23,16 @@ export default async function AdminConfigPage() {
     const saveFile = (await import("@/lib/file-upload")).saveFile; // Dynamic import to avoid server/client issues if any, or just standard import
 
     const logoFile = formData.get("logo") as File;
-    const bannerFile = formData.get("banner") as File;
-
     const logoUrl = await saveFile(logoFile, "config");
-    const bannerUrl = await saveFile(bannerFile, "config");
+    // const bannerUrl = await saveFile(bannerFile, "config");
 
     const updateData: any = {
       name: formData.get("name") as string,
-      tagline: formData.get("tagline") as string,
+      slogan: formData.get("slogan") as string,
       footerDescription: formData.get("footerDescription") as string,
       primaryColor: formData.get("primaryColor") as string,
       openingHours: formData.get("openingHours") as string,
 
-      welcomeTitle: formData.get("welcomeTitle") as string,
-      welcomeDescription: formData.get("welcomeDescription") as string,
       statsStudents: formData.get("statsStudents") as string,
       statsTeachers: formData.get("statsTeachers") as string,
       statsPartners: formData.get("statsPartners") as string,
@@ -48,7 +44,6 @@ export default async function AdminConfigPage() {
     };
 
     if (logoUrl) updateData.logoUrl = logoUrl;
-    if (bannerUrl) updateData.bannerUrl = bannerUrl;
 
     await prisma.schoolConfig.upsert({
       where: { id: "config" },

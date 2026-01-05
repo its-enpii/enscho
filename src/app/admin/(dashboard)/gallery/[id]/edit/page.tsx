@@ -8,8 +8,38 @@ import { notFound } from "next/navigation";
 import { writeFile, unlink } from "fs/promises";
 import path from "path";
 
+import { cookies } from "next/headers";
+
 async function updateGalleryItem(id: string, formData: FormData) {
   "use server";
+
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
+  const adminSession = cookieStore.get("admin_session")?.value;
+
+  if (!session && !adminSession) {
+    throw new Error("Unauthorized");
+  }
+
+  const [currentUserId, currentRole] = session
+    ? session.split(":")
+    : ["", "ADMIN"];
+  const canManageAll =
+    currentRole === "ADMIN" ||
+    currentRole === "TEACHER" ||
+    currentRole === "ALUMNI" ||
+    !!adminSession;
+
+  // Verify ownership or admin status
+  const itemToUpdate = await prisma.gallery.findUnique({
+    where: { id },
+    select: { authorId: true, imageUrl: true },
+  });
+
+  if (!itemToUpdate) throw new Error("Item not found");
+  if (!canManageAll && itemToUpdate.authorId !== currentUserId) {
+    throw new Error("You do not have permission to edit this item");
+  }
 
   const title = formData.get("title") as string;
   const category = formData.get("category") as string;
@@ -19,12 +49,6 @@ async function updateGalleryItem(id: string, formData: FormData) {
 
   // If new image uploaded
   if (image && image.size > 0) {
-    // Get old image to delete
-    const oldItem = await prisma.gallery.findUnique({
-      where: { id },
-      select: { imageUrl: true },
-    });
-
     // Generate unique filename
     const timestamp = Date.now();
     const originalName = image.name.replace(/\s+/g, "-");
@@ -41,12 +65,15 @@ async function updateGalleryItem(id: string, formData: FormData) {
     imageUrl = `/uploads/gallery/${filename}`;
 
     // Delete old file if exists and is local
-    if (oldItem?.imageUrl && oldItem.imageUrl.startsWith("/uploads/")) {
+    if (
+      itemToUpdate.imageUrl &&
+      itemToUpdate.imageUrl.startsWith("/uploads/")
+    ) {
       try {
         const oldFilepath = path.join(
           process.cwd(),
           "public",
-          oldItem.imageUrl
+          itemToUpdate.imageUrl
         );
         await unlink(oldFilepath);
       } catch (error) {

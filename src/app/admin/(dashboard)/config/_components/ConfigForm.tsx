@@ -52,6 +52,22 @@ export default function ConfigForm({ initialData, action }: ConfigFormProps) {
     setSocials(newSocials);
   };
 
+  const [logoPreview, setLogoPreview] = useState<string | null>(
+    initialData.logoUrl || null
+  );
+
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Use URL.createObjectURL for faster preview
+      const previewUrl = URL.createObjectURL(file);
+      setLogoPreview(previewUrl);
+
+      // Clean up memory when component unmounts or preview changes
+      return () => URL.revokeObjectURL(previewUrl);
+    }
+  };
+
   return (
     <form
       action={async (formData) => {
@@ -76,6 +92,22 @@ export default function ConfigForm({ initialData, action }: ConfigFormProps) {
 
       <div>
         <label className="block text-sm font-medium text-slate-700 mb-1">
+          Slogan Sekolah
+        </label>
+        <input
+          name="slogan"
+          defaultValue={initialData.slogan || ""}
+          placeholder="Contoh: Sekolah Pusat Keunggulan"
+          type="text"
+          className="w-full px-3 py-2 border rounded-md"
+        />
+        <p className="text-xs text-slate-500 mt-1">
+          Slogan ini akan muncul pada judul tab browser (Nama Sekolah - Slogan).
+        </p>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-1">
           Warna Utama (Primary Color)
         </label>
         <div className="flex items-center gap-3">
@@ -88,55 +120,6 @@ export default function ConfigForm({ initialData, action }: ConfigFormProps) {
           <span className="text-sm text-slate-500">
             Pilih warna dominan untuk website.
           </span>
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1">
-          Slogan / Tagline (Hero Text)
-        </label>
-        <input
-          name="tagline"
-          defaultValue={initialData.tagline || ""}
-          placeholder="Contoh: Mewujudkan Generasi Unggul, Berkarakter, dan Siap Kerja"
-          type="text"
-          className="w-full px-3 py-2 border rounded-md"
-        />
-        <p className="text-xs text-slate-500 mt-1">
-          Teks ini akan muncul di halaman depan (Hero Section) di bawah nama
-          sekolah.
-        </p>
-      </div>
-
-      <div className="pt-4 border-t space-y-4">
-        <h3 className="font-medium text-slate-900">
-          Bagian Sambutan (Welcome Section)
-        </h3>
-
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            Judul Sambutan
-          </label>
-          <input
-            name="welcomeTitle"
-            defaultValue={initialData.welcomeTitle || ""}
-            placeholder="Contoh: Mencetak Generasi Juara"
-            type="text"
-            className="w-full px-3 py-2 border rounded-md"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">
-            Deskripsi Singkat
-          </label>
-          <textarea
-            name="welcomeDescription"
-            defaultValue={initialData.welcomeDescription || ""}
-            placeholder="Contoh: Selamat datang di website resmi kami..."
-            className="w-full px-3 py-2 border rounded-md"
-            rows={2}
-          ></textarea>
         </div>
       </div>
 
@@ -258,51 +241,68 @@ export default function ConfigForm({ initialData, action }: ConfigFormProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t">
-        {/* Logo Upload */}
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
-            Logo Sekolah
-          </label>
-          <div className="flex items-center gap-4">
-            <div className="w-20 h-20 bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden">
-              {/* We use a simple img tag that defaults to initialData if available. 
-                      Ideally we'd use state for preview like EmployeeForm, but let's keep it simple for now or implement preview if requested.
-                      Actually, better to add preview for UX. */}
-              {/* Placeholder for now, simplistic approach without heavy client state for file preview unless needed */}
-              <span className="text-xs text-slate-400">Preview</span>
-            </div>
-            <input
-              type="file"
-              name="logo"
-              accept="image/*"
-              className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-            />
-          </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Format: PNG, JPG. Maks 2MB.
-          </p>
-        </div>
+      <div className="pt-6 border-t">
+        <label className="block text-sm font-semibold text-slate-900 mb-4">
+          Logo Sekolah
+        </label>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+          <div className="relative w-32 h-32 bg-slate-100 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden group shadow-inner">
+            {/* Checkerboard pattern for transparency */}
+            <div
+              className="absolute inset-0 opacity-10"
+              style={{
+                backgroundImage:
+                  "conic-gradient(#000 0.25turn, #fff 0.25turn 0.5turn, #000 0.5turn 0.75turn, #fff 0.75turn)",
+                backgroundSize: "20px 20px",
+              }}
+            ></div>
 
-        {/* Banner Upload */}
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
-            Banner Sekolah (Hero)
-          </label>
-          <div className="flex items-center gap-4">
-            <div className="w-32 h-20 bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden">
-              <span className="text-xs text-slate-400">Preview</span>
-            </div>
-            <input
-              type="file"
-              name="banner"
-              accept="image/*"
-              className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-            />
+            {logoPreview ? (
+              <img
+                key={logoPreview}
+                src={logoPreview}
+                alt="Logo Preview"
+                className="relative z-10 max-w-full max-h-full object-contain p-4 transition-transform group-hover:scale-105"
+              />
+            ) : (
+              <div className="relative z-10 text-center p-4">
+                <span className="text-xs text-slate-400 font-medium">
+                  Belum ada logo
+                </span>
+              </div>
+            )}
           </div>
-          <p className="text-xs text-slate-500 mt-1">
-            Gambar utama di halaman depan jika slider kosong.
-          </p>
+
+          <div className="flex-1 space-y-3">
+            <div className="flex flex-col gap-2">
+              <input
+                type="file"
+                name="logo"
+                id="logo-upload"
+                accept="image/*"
+                onChange={handleLogoChange}
+                className="hidden"
+              />
+              <label
+                htmlFor="logo-upload"
+                className="inline-flex items-center justify-center px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer transition-colors shadow-sm"
+              >
+                Pilih Logo Baru
+              </label>
+
+              {initialData.logoUrl && (
+                <p className="text-[10px] text-slate-400 break-all max-w-xs">
+                  File saat ini: {initialData.logoUrl}
+                </p>
+              )}
+            </div>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Format: **PNG** (disarankan untuk background transparan) atau
+              **JPG**.
+              <br />
+              Ukuran maksimal **2MB**.
+            </p>
+          </div>
         </div>
       </div>
 

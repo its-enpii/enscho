@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Save } from "lucide-react";
+import bcrypt from "bcryptjs";
 
 export default function CreateUserPage() {
   async function createUser(formData: FormData) {
@@ -27,10 +28,12 @@ export default function CreateUserPage() {
       throw new Error("Email sudah terdaftar");
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     await prisma.user.create({
       data: {
         email,
-        password, // In production, hash this!
+        password: hashedPassword,
         name: name || null,
         role: role as any,
       },
@@ -147,11 +150,11 @@ export default function CreateUserPage() {
         </div>
       </form>
 
-      <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-        <p className="text-sm text-amber-800">
-          <strong>Catatan Keamanan:</strong> Password saat ini disimpan dalam
-          bentuk plain text. Untuk production, pastikan menggunakan hashing
-          (bcrypt/argon2).
+      <div className="mt-6 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+        <p className="text-sm text-emerald-800">
+          <strong>Catatan Keamanan:</strong> Password kini disimpan dalam bentuk
+          hash (bcrypt) yang aman. Password akan otomatis dienkripsi sebelum
+          disimpan ke database.
         </p>
       </div>
     </div>

@@ -18,14 +18,22 @@ interface GalleryItem {
   imageUrl: string;
   category: string;
   createdAt: Date;
+  authorId?: string | null;
 }
 
 interface GalleryTableProps {
   items: GalleryItem[];
   onDelete: (id: string) => Promise<void>;
+  currentUserId: string;
+  canManageAll: boolean;
 }
 
-export default function GalleryTable({ items, onDelete }: GalleryTableProps) {
+export default function GalleryTable({
+  items,
+  onDelete,
+  currentUserId,
+  canManageAll,
+}: GalleryTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [currentPage, setCurrentPage] = useState(1);
@@ -149,22 +157,29 @@ export default function GalleryTable({ items, onDelete }: GalleryTableProps) {
                   {item.title}
                 </h3>
                 <p className="text-xs text-slate-500 mb-3">{item.category}</p>
-                <div className="flex gap-2">
-                  <Link
-                    href={`/admin/gallery/${item.id}/edit`}
-                    className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
-                  >
-                    <Pencil size={14} />
-                    Edit
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(item.id)}
-                    disabled={deletingId === item.id}
-                    className="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                </div>
+                {(canManageAll || item.authorId === currentUserId) && (
+                  <div className="flex gap-2">
+                    <Link
+                      href={`/admin/gallery/${item.id}/edit`}
+                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+                    >
+                      <Pencil size={14} />
+                      Edit
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      disabled={deletingId === item.id}
+                      className="px-3 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                )}
+                {!(canManageAll || item.authorId === currentUserId) && (
+                  <div className="px-3 py-2 bg-slate-50 text-slate-400 rounded-lg text-xs text-center font-medium">
+                    Hanya Lihat (View Only)
+                  </div>
+                )}
               </div>
             </div>
           ))}

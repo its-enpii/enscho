@@ -16,6 +16,9 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   posts     Post[]
+  gallery   Gallery[]
+  pages     Page[]
+  majors    Major[]
 }
 
 enum Role {
@@ -39,16 +42,12 @@ model SchoolConfig {
   socialMedia Json?   // New flexible configuration
   
   logoUrl     String? // For site logo
-  bannerUrl   String? // For main site banner/hero background if slides are empty
-  tagline     String? // School motto or welcome text
+  slogan      String? // For website title (Name - Slogan)
   footerDescription String? @db.Text // Description shown in footer
   primaryColor String? @default("#2563eb") // Default to blue-600
   openingHours String? @db.Text // e.g. "Senin - Jumat: 07:00 - 16:00\nSabtu: 07:00 - 12:00"
   
-  // Welcome Section & Stats
-  welcomeTitle       String? // e.g "Mencetak Generasi Juara"
-  welcomeDescription String? @db.Text // Short welcome text
-  
+  // Stats
   statsStudents      String? // e.g "1200+"
   statsTeachers      String? // e.g "85"
   statsPartners      String? // e.g "50+"
@@ -62,6 +61,8 @@ model Page {
   title     String
   slug      String   @unique
   content   String   @db.LongText
+  authorId  String?
+  author    User?    @relation(fields: [authorId], references: [id])
   updatedAt DateTime @updatedAt
 }
 
@@ -86,6 +87,9 @@ model Major {
   // New detailed fields
   careerProspects String? @db.Text  // Stored as newline separated items
   competencies    String? @db.Text  // Stored as newline separated items
+
+  authorId  String?
+  author    User?    @relation(fields: [authorId], references: [id])
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -133,6 +137,8 @@ model Gallery {
   title     String?
   imageUrl  String
   category  String?
+  authorId  String?
+  author    User?    @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
 }
 

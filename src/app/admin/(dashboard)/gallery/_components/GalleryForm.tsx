@@ -75,10 +75,16 @@ export default function GalleryForm({ action, initialData }: GalleryFormProps) {
 
     try {
       await action(formData);
-    } catch (error) {
+    } catch (error: any) {
+      if (
+        error.message === "NEXT_REDIRECT" ||
+        error.digest?.startsWith("NEXT_REDIRECT")
+      ) {
+        // Redirecting, do not reset isSubmitting to prevent interaction
+        return;
+      }
       console.error(error);
       alert("Terjadi kesalahan saat menyimpan data");
-    } finally {
       setIsSubmitting(false);
     }
   };

@@ -11,14 +11,10 @@ export const SCHOOL_INFO = {
   },
   socialMedia: [],
   logoUrl: null,
-  bannerUrl: null,
-  tagline: null,
+  slogan: null,
   footerDescription: null,
   primaryColor: "#2563eb", // blue-600
   openingHours: "Senin - Jumat: 07:00 - 16:00\nSabtu: 07:00 - 12:00",
-
-  welcomeTitle: null,
-  welcomeDescription: null,
   statsStudents: null,
   statsTeachers: null,
   statsPartners: null,

@@ -4,15 +4,49 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import PostsTable from "./_components/PostsTable";
 
+import { cookies } from "next/headers";
+
 export default async function AdminPostsPage() {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
+  const adminSession = cookieStore.get("admin_session")?.value;
+
+  let currentUserId = "";
+  let currentRole = "ADMIN";
+
+  if (session) {
+    [currentUserId, currentRole] = session.split(":");
+  } else if (!adminSession) {
+    return null;
+  }
+
   const posts = await prisma.post.findMany({
     orderBy: { createdAt: "desc" },
     include: { author: { select: { name: true } } },
   });
 
+  const canManageAll =
+    currentRole === "ADMIN" ||
+    currentRole === "TEACHER" ||
+    currentRole === "ALUMNI" ||
+    !!adminSession;
+
   async function deletePost(formData: FormData) {
     "use server";
     const id = formData.get("id") as string;
+
+    // Authorization check
+    const postToDelete = await prisma.post.findUnique({
+      where: { id },
+      select: { authorId: true },
+    });
+
+    if (!postToDelete) throw new Error("Post not found");
+
+    if (!canManageAll && postToDelete.authorId !== currentUserId) {
+      throw new Error("You do not have permission to delete this post");
+    }
+
     await prisma.post.delete({ where: { id } });
     revalidatePath("/admin/posts");
   }
@@ -132,7 +166,12 @@ export default async function AdminPostsPage() {
       </div>
 
       {/* Posts Table with Search, Filter, Pagination */}
-      <PostsTable posts={posts} onDelete={deletePost} />
+      <PostsTable
+        posts={posts as any}
+        onDelete={deletePost}
+        currentUserId={currentUserId}
+        canManageAll={canManageAll}
+      />
     </div>
   );
 }

@@ -6,10 +6,23 @@ import { getSchoolConfig } from "@/services/school";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "SMK Enscho - Sekolah Pusat Keunggulan",
-  description: "Website resmi SMK Enscho. Siap kerja, santun, mandiri, dan kreatif.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const config = await getSchoolConfig();
+  const slogan = config.slogan ? ` - ${config.slogan}` : "";
+
+  return {
+    title: `${config.name}${slogan}`,
+    description: config.footerDescription || "Website resmi sekolah.",
+    icons: {
+      icon: [
+        { url: config.logoUrl || "/favicon.ico" },
+        { url: config.logoUrl || "/favicon.ico", sizes: "32x32" },
+      ],
+      shortcut: config.logoUrl || "/favicon.ico",
+      apple: config.logoUrl || "/favicon.ico",
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
