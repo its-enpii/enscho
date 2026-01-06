@@ -8,6 +8,7 @@ import bcrypt from "bcryptjs";
 export async function loginAdmin(prevState: any, formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+  const rememberMe = formData.get("remember-me") === "on";
 
   try {
     const user = await prisma.user.findUnique({
@@ -32,10 +33,12 @@ export async function loginAdmin(prevState: any, formData: FormData) {
 
     // Set simple session cookie
     const cookieStore = await cookies();
+    const maxAge = rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24; // 30 days or 1 day
+
     cookieStore.set("admin_session", user.id, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24, // 1 day
+      maxAge,
       path: "/",
     });
 
@@ -43,7 +46,7 @@ export async function loginAdmin(prevState: any, formData: FormData) {
     cookieStore.set("session", `${user.id}:${user.role}`, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24, // 1 day
+      maxAge,
       path: "/",
     });
   } catch (error) {

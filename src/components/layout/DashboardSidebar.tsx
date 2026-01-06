@@ -118,7 +118,7 @@ export function DashboardSidebar({
   // Filter menu based on role
   const filteredMenu = allMenuItems
     .filter((item) => {
-      if (role === "ADMIN") return true;
+      // if (role === "ADMIN") return true; // Fix: Respect explicit roles even for ADMIN
       if (!item.roles) return false;
       return item.roles.includes(role);
     })
@@ -147,20 +147,13 @@ export function DashboardSidebar({
 
       // Adjust href for dashboard
       if (item.label === "Dashboard") {
-        const dashPath =
-          role === "ADMIN"
-            ? "/admin"
-            : role === "TEACHER"
-            ? "/guru"
-            : role === "STUDENT"
-            ? "/siswa"
-            : "/alumni";
+        const dashPath = "/" + role.toLowerCase();
         return { ...item, href: dashPath };
       }
 
       // If Student - Galeri Foto adjustments
       if (item.label === "Galeri Foto" && role === "STUDENT") {
-        return { ...item, href: "/siswa/gallery" };
+        return { ...item, href: "/student/gallery" };
       }
 
       return item;

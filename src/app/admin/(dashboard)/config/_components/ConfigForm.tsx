@@ -123,45 +123,6 @@ export default function ConfigForm({ initialData, action }: ConfigFormProps) {
         </div>
       </div>
 
-      <div className="pt-4 border-t space-y-4">
-        <h3 className="font-medium text-slate-900">Statistik Sekolah</h3>
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Total Siswa
-            </label>
-            <input
-              name="statsStudents"
-              defaultValue={initialData.statsStudents || "1000+"}
-              type="text"
-              className="w-full px-3 py-2 border rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Total Guru & Staf
-            </label>
-            <input
-              name="statsTeachers"
-              defaultValue={initialData.statsTeachers || "50+"}
-              type="text"
-              className="w-full px-3 py-2 border rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Total Mitra
-            </label>
-            <input
-              name="statsPartners"
-              defaultValue={initialData.statsPartners || "10+"}
-              type="text"
-              className="w-full px-3 py-2 border rounded-md"
-            />
-          </div>
-        </div>
-      </div>
-
       <div className="pt-4 border-t">
         <h3 className="font-medium text-slate-900 mb-4">Kontak & Alamat</h3>
         <div className="grid grid-cols-2 gap-4">

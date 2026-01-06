@@ -47,10 +47,7 @@ model SchoolConfig {
   primaryColor String? @default("#2563eb") // Default to blue-600
   openingHours String? @db.Text // e.g. "Senin - Jumat: 07:00 - 16:00\nSabtu: 07:00 - 12:00"
   
-  // Stats
-  statsStudents      String? // e.g "1200+"
-  statsTeachers      String? // e.g "85"
-  statsPartners      String? // e.g "50+"
+
 
   updatedAt   DateTime @updatedAt
 }

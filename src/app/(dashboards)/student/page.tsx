@@ -52,7 +52,7 @@ export default async function SiswaDashboard() {
             count: myGalleryCount.toString(),
             icon: ImageIcon,
             color: "blue",
-            href: "/siswa/gallery",
+            href: "/student/gallery",
           },
           {
             label: "Dokumen Baru",

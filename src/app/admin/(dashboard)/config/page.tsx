@@ -33,10 +33,6 @@ export default async function AdminConfigPage() {
       primaryColor: formData.get("primaryColor") as string,
       openingHours: formData.get("openingHours") as string,
 
-      statsStudents: formData.get("statsStudents") as string,
-      statsTeachers: formData.get("statsTeachers") as string,
-      statsPartners: formData.get("statsPartners") as string,
-
       phone: formData.get("phone") as string,
       email: formData.get("email") as string,
       address: formData.get("address") as string,
