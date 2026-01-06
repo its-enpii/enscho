@@ -20,16 +20,17 @@ export default async function GaleriPage() {
   ).sort();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Galeri Foto</h1>
-            <p className="text-lg text-blue-100">
-              Dokumentasi kegiatan, prestasi, dan momen berharga di sekolah kami
-            </p>
-          </div>
+      {/* Header */}
+      <div className="bg-blue-900 py-16 border-b border-white/10">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Galeri Foto
+          </h1>
+          <p className="text-blue-100 max-w-2xl mx-auto">
+            Dokumentasi kegiatan, prestasi, dan momen berharga di sekolah kami
+          </p>
         </div>
       </div>
 

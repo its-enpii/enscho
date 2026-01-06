@@ -28,13 +28,12 @@ export default async function ProfilPage({
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero Header */}
-      <div className="bg-slate-900 text-white py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-blue-900/20 z-0" />
+      <div className="bg-blue-900 text-white py-16 relative overflow-hidden border-b border-white/10">
         <div className="container mx-auto px-4 relative z-10 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{page.title}</h1>
 
           {/* Breadcrumb */}
-          <nav className="flex items-center justify-center gap-2 text-sm text-slate-400 overflow-x-auto whitespace-nowrap pb-1">
+          <nav className="flex items-center justify-center gap-2 text-sm text-blue-200 overflow-x-auto whitespace-nowrap pb-1">
             <Link href="/" className="hover:text-white transition-colors">
               <Home size={14} />
             </Link>

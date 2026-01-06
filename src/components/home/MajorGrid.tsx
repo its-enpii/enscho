@@ -87,12 +87,7 @@ export function MajorGrid({ majors }: { majors: Major[] }) {
                 )}
 
                 {/* Floating Icon */}
-                <div className="absolute bottom-4 right-4 z-20 w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 text-white group-hover:bg-blue-600 group-hover:border-blue-500 transition-colors duration-300">
-                  <ChevronRight
-                    size={20}
-                    className="group-hover:translate-x-0.5 transition-transform"
-                  />
-                </div>
+                {/* Floating Icon Removed */}
               </div>
 
               {/* Content Container */}

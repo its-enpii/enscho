@@ -53,7 +53,9 @@ async function createHeroSlide(formData: FormData) {
   });
 
   revalidatePath("/admin/hero");
-  redirect("/admin/hero");
+  revalidatePath("/admin/hero");
+  // redirect("/admin/hero");
+  return { success: true };
 }
 
 export default function CreateHeroSlidePage() {

@@ -2,6 +2,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { DashboardShell } from "@/components/layout/DashboardShell";
+import { ToastProvider } from "@/components/ui/ToastProvider";
+import { ConfirmDialogProvider } from "@/components/ui/ConfirmDialog";
 import { Role } from "@prisma/client";
 
 export default async function AdminLayout({
@@ -31,11 +33,15 @@ export default async function AdminLayout({
   }
 
   return (
-    <DashboardShell
-      user={{ name: userName, email: "", role: userRole }}
-      schoolName="SMK Enscho"
-    >
-      {children}
-    </DashboardShell>
+    <ToastProvider>
+      <ConfirmDialogProvider>
+        <DashboardShell
+          user={{ name: userName, email: "", role: userRole }}
+          schoolName="SMK Enscho"
+        >
+          {children}
+        </DashboardShell>
+      </ConfirmDialogProvider>
+    </ToastProvider>
   );
 }

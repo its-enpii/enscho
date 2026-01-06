@@ -37,6 +37,10 @@ export default async function AdminConfigPage() {
       email: formData.get("email") as string,
       address: formData.get("address") as string,
       socialMedia: socialMediaJson,
+
+      // School Profile Content
+      history: formData.get("history") as string,
+      vision: formData.get("vision") as string,
     };
 
     if (logoUrl) updateData.logoUrl = logoUrl;

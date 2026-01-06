@@ -1,0 +1,24 @@
+// Script untuk update semua alert() dan confirm() ke toast/dialog
+// File yang perlu diupdate:
+// 1. UserTable.tsx - lines 245, 253
+// 2. PagesTable.tsx - line 176, 182
+// 3. PostsTable.tsx - line 249
+// 4. PartnersTable.tsx - line 172
+// 5. EmployeesTable.tsx - line 195
+
+/**
+ * UserTable.tsx
+ * - Add: import { useConfirm } from "@/components/ui/ConfirmDialog";
+ * - Add: import { useToast } from "@/components/ui/ToastProvider";
+ * - In UserRow component, add hooks
+ * - Replace confirm() at line 245
+ * - Replace alert() at line 253
+ */
+
+/**
+ * PagesTable.tsx, PostsTable.tsx, PartnersTable.tsx, EmployeesTable.tsx
+ * - Similar pattern
+ * - Add imports
+ * - Add hooks
+ * - Replace confirm() and alert()
+ */

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight, Grid3x3, Grid2x2 } from "lucide-react";
 
@@ -49,7 +49,7 @@ export default function GalleryGrid({ items, categories }: GalleryGridProps) {
   };
 
   // Keyboard navigation
-  useState(() => {
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (selectedImage === null) return;
       if (e.key === "Escape") closeLightbox();
@@ -59,7 +59,7 @@ export default function GalleryGrid({ items, categories }: GalleryGridProps) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  });
+  }, [selectedImage, filteredItems]);
 
   return (
     <div className="space-y-8">

@@ -4,6 +4,8 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Pencil, Trash2, MoveUp, MoveDown, Eye, EyeOff } from "lucide-react";
+import { useConfirm } from "@/components/ui/ConfirmDialog";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface HeroSlide {
   id: string;
@@ -27,12 +29,25 @@ export default function HeroSlidesList({
   onUpdateOrder,
 }: HeroSlidesListProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const { confirm } = useConfirm();
+  const { showSuccess, showError } = useToast();
 
   const handleDelete = async (id: string, title: string) => {
-    if (!confirm(`Apakah Anda yakin ingin menghapus slide "${title}"?`)) return;
+    const isConfirmed = await confirm({
+      title: "Hapus Slide",
+      message: `Apakah Anda yakin ingin menghapus slide "${title}"?`,
+      confirmText: "Ya, Hapus",
+      variant: "danger",
+    });
+
+    if (!isConfirmed) return;
+
     setDeletingId(id);
     try {
       await onDelete(id);
+      showSuccess("Slide berhasil dihapus");
+    } catch (error) {
+      showError("Gagal menghapus slide");
     } finally {
       setDeletingId(null);
     }

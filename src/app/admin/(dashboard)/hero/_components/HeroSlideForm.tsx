@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Upload, X } from "lucide-react";
 import Image from "next/image";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface HeroSlideFormProps {
   action: (formData: FormData) => Promise<void>;
@@ -21,6 +22,7 @@ export default function HeroSlideForm({
   initialData,
 }: HeroSlideFormProps) {
   const router = useRouter();
+  const { showError, showSuccess } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState(initialData?.imageUrl || "");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -29,12 +31,12 @@ export default function HeroSlideForm({
     const file = e.target.files?.[0];
     if (file) {
       if (!file.type.startsWith("image/")) {
-        alert("File harus berupa gambar!");
+        showError("File harus berupa gambar!");
         return;
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        alert("Ukuran file maksimal 5MB!");
+        showError("Ukuran file maksimal 5MB!");
         return;
       }
 
@@ -61,7 +63,7 @@ export default function HeroSlideForm({
     e.preventDefault();
 
     if (!selectedFile && !initialData?.imageUrl) {
-      alert("Silakan pilih gambar!");
+      showError("Silakan pilih gambar!");
       return;
     }
 
@@ -73,7 +75,34 @@ export default function HeroSlideForm({
       formData.set("image", selectedFile);
     }
 
-    await action(formData);
+    try {
+      // @ts-ignore
+      const result = await action(formData);
+
+      if (
+        result &&
+        typeof result === "object" &&
+        "success" in result &&
+        result.success
+      ) {
+        showSuccess("Slide berhasil disimpan");
+        setTimeout(() => {
+          router.push("/admin/hero");
+          router.refresh();
+        }, 1000);
+        return;
+      }
+    } catch (error: any) {
+      if (
+        error.message === "NEXT_REDIRECT" ||
+        error.digest?.startsWith("NEXT_REDIRECT")
+      ) {
+        return;
+      }
+      console.error(error);
+      showError("Terjadi kesalahan saat menyimpan slide");
+      setIsSubmitting(false);
+    }
   };
 
   return (

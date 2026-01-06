@@ -2,6 +2,7 @@
 
 import { LogOut } from "lucide-react";
 import { logout } from "@/app/actions/auth";
+import { useConfirm } from "@/components/ui/ConfirmDialog";
 
 interface LogoutButtonProps {
   variant?: "admin" | "portal";
@@ -12,10 +13,16 @@ export function LogoutButton({
   variant = "admin",
   className,
 }: LogoutButtonProps) {
-  const handleLogout = async (formData: FormData) => {
-    const confirmed = window.confirm(
-      "Apakah Anda yakin ingin keluar dari sistem?"
-    );
+  const { confirm } = useConfirm();
+
+  const handleLogout = async () => {
+    const confirmed = await confirm({
+      title: "Keluar dari Sistem",
+      message: "Apakah Anda yakin ingin keluar dari sistem?",
+      confirmText: "Ya, Keluar",
+      variant: "danger",
+    });
+
     if (confirmed) {
       await logout();
     }
@@ -23,32 +30,29 @@ export function LogoutButton({
 
   if (variant === "portal") {
     return (
-      <form action={handleLogout}>
-        <button
-          className={
-            className ||
-            "p-2 text-slate-400 hover:text-red-600 transition-colors"
-          }
-          title="Keluar"
-        >
-          <LogOut size={20} />
-        </button>
-      </form>
+      <button
+        onClick={handleLogout}
+        className={
+          className || "p-2 text-slate-400 hover:text-red-600 transition-colors"
+        }
+        title="Keluar"
+      >
+        <LogOut size={20} />
+      </button>
     );
   }
 
   return (
-    <form action={handleLogout}>
-      <button
-        type="submit"
-        className={
-          className ||
-          "flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 w-full rounded-lg transition-colors"
-        }
-      >
-        <LogOut size={20} />
-        <span className="text-sm font-medium">Keluar</span>
-      </button>
-    </form>
+    <button
+      onClick={handleLogout}
+      type="button"
+      className={
+        className ||
+        "flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 w-full rounded-lg transition-colors"
+      }
+    >
+      <LogOut size={20} />
+      <span className="text-sm font-medium">Keluar</span>
+    </button>
   );
 }

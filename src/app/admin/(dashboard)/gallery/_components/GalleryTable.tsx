@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useConfirm } from "@/components/ui/ConfirmDialog";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface GalleryItem {
   id: string;
@@ -38,6 +40,8 @@ export default function GalleryTable({
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [currentPage, setCurrentPage] = useState(1);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const { confirm } = useConfirm();
+  const { showSuccess, showError } = useToast();
   const itemsPerPage = 12;
 
   // Get unique categories
@@ -62,10 +66,21 @@ export default function GalleryTable({
   );
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus foto ini?")) return;
+    const isConfirmed = await confirm({
+      title: "Hapus Foto",
+      message: "Apakah Anda yakin ingin menghapus foto ini?",
+      confirmText: "Ya, Hapus",
+      variant: "danger",
+    });
+
+    if (!isConfirmed) return;
+
     setDeletingId(id);
     try {
       await onDelete(id);
+      showSuccess("Foto berhasil dihapus");
+    } catch (error) {
+      showError("Gagal menghapus foto");
     } finally {
       setDeletingId(null);
     }

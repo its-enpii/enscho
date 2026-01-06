@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Upload, X } from "lucide-react";
 import Image from "next/image";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface GalleryFormProps {
   action: (formData: FormData) => Promise<void>;
@@ -16,6 +17,7 @@ interface GalleryFormProps {
 
 export default function GalleryForm({ action, initialData }: GalleryFormProps) {
   const router = useRouter();
+  const { showError, showSuccess } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState(initialData?.imageUrl || "");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -25,13 +27,13 @@ export default function GalleryForm({ action, initialData }: GalleryFormProps) {
     if (file) {
       // Validate file type
       if (!file.type.startsWith("image/")) {
-        alert("File harus berupa gambar!");
+        showError("File harus berupa gambar!");
         return;
       }
 
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert("Ukuran file maksimal 5MB!");
+        showError("Ukuran file maksimal 5MB!");
         return;
       }
 
@@ -60,7 +62,7 @@ export default function GalleryForm({ action, initialData }: GalleryFormProps) {
     e.preventDefault();
 
     if (!selectedFile && !initialData?.imageUrl) {
-      alert("Silakan pilih gambar!");
+      showError("Silakan pilih gambar!");
       return;
     }
 
@@ -74,17 +76,31 @@ export default function GalleryForm({ action, initialData }: GalleryFormProps) {
     }
 
     try {
-      await action(formData);
+      // @ts-ignore
+      const result = await action(formData);
+
+      if (
+        result &&
+        typeof result === "object" &&
+        "success" in result &&
+        result.success
+      ) {
+        showSuccess("Data berhasil disimpan");
+        setTimeout(() => {
+          router.push("/admin/gallery");
+          router.refresh();
+        }, 1000);
+        return;
+      }
     } catch (error: any) {
       if (
         error.message === "NEXT_REDIRECT" ||
         error.digest?.startsWith("NEXT_REDIRECT")
       ) {
-        // Redirecting, do not reset isSubmitting to prevent interaction
         return;
       }
       console.error(error);
-      alert("Terjadi kesalahan saat menyimpan data");
+      showError("Terjadi kesalahan saat menyimpan data");
       setIsSubmitting(false);
     }
   };

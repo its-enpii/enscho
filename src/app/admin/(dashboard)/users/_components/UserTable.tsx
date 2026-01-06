@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import { useConfirm } from "@/components/ui/ConfirmDialog";
+import { useToast } from "@/components/ui/ToastProvider";
 
 interface User {
   id: string;
@@ -239,19 +241,26 @@ function UserRow({
   getRoleLabel: (role: string) => string;
 }) {
   const [isDeleting, setIsDeleting] = useState(false);
+  const { confirm } = useConfirm();
+  const { showSuccess, showError } = useToast();
 
   const handleDelete = async () => {
-    if (
-      !confirm(`Yakin ingin menghapus pengguna "${user.name || user.email}"?`)
-    ) {
-      return;
-    }
+    const isConfirmed = await confirm({
+      title: "Hapus Pengguna",
+      message: `Yakin ingin menghapus pengguna "${user.name || user.email}"?`,
+      confirmText: "Ya, Hapus",
+      variant: "danger",
+    });
+
+    if (!isConfirmed) return;
 
     setIsDeleting(true);
     const result = await onDelete(user.id);
     if (!result.success) {
-      alert(result.error || "Gagal menghapus pengguna");
+      showError(result.error || "Gagal menghapus pengguna");
       setIsDeleting(false);
+    } else {
+      showSuccess("Pengguna berhasil dihapus");
     }
   };
 

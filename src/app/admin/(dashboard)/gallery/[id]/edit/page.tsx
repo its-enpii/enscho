@@ -92,7 +92,9 @@ async function updateGalleryItem(id: string, formData: FormData) {
   });
 
   revalidatePath("/admin/gallery");
-  redirect("/admin/gallery");
+  revalidatePath("/admin/gallery");
+  // redirect("/admin/gallery");
+  return { success: true };
 }
 
 export default async function EditGalleryPage({

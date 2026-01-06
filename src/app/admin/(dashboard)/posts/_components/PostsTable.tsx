@@ -10,6 +10,7 @@ import {
   Eye,
 } from "lucide-react";
 import Link from "next/link";
+import { DeleteButtonInline } from "@/app/admin/components/DeleteButtonInline";
 
 interface Post {
   id: string;
