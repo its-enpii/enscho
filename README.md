@@ -21,7 +21,7 @@ This project is built using the following technologies:
 
 - **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
 - **Language:** [TypeScript](https://www.typescriptlang.org/)
-- **Database:** [PostgreSQL](https://www.postgresql.org/) (via [Prisma ORM](https://www.prisma.io/))
+- **Database:** [MySQL](https://www.mysql.com/) (via [Prisma ORM](https://www.prisma.io/))
 - **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
 - **Authentication:** Custom implementation (using `bcryptjs` for security)
 - **UI Components:** [Lucide React](https://lucide.dev/), [Framer Motion](https://www.framer.com/motion/)
@@ -34,7 +34,7 @@ Follow these steps to set up the project locally.
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) (Latest LTS recommended)
-- A database instance (PostgreSQL recommended)
+- A database instance (MySQL recommended)
 
 ### Installation
 
@@ -59,7 +59,7 @@ Follow these steps to set up the project locally.
     Create a `.env` file in the root directory and configure your environment variables (refer to `.env.example` if available, or set up your database URL).
 
     ```env
-    DATABASE_URL="postgresql://user:password@localhost:5432/enscho?schema=public"
+    DATABASE_URL="mysql://user:password@localhost:3306/enscho"
     ```
 
 4.  **Database Setup:**
