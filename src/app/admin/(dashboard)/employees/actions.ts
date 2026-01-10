@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { writeFile } from "fs/promises";
+import { writeFile, unlink } from "fs/promises";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 
@@ -35,6 +35,19 @@ async function saveFile(file: File): Promise<string | null> {
   } catch (e) {
     console.error("Error saving file:", e);
     return null;
+  }
+}
+
+async function deleteFile(fileUrl: string | null): Promise<void> {
+  if (!fileUrl) return;
+
+  try {
+    const relativePath = fileUrl.startsWith("/") ? fileUrl.slice(1) : fileUrl;
+    const filePath = path.join(process.cwd(), "public", relativePath);
+    await unlink(filePath);
+    console.log("Deleted old file:", filePath);
+  } catch (e) {
+    console.log("Could not delete file (might not exist):", fileUrl);
   }
 }
 
@@ -79,11 +92,21 @@ export async function createEmployee(formData: FormData) {
 }
 
 export async function updateEmployee(id: string, formData: FormData) {
+  // Get current employee to check for existing image
+  const currentEmployee = await prisma.employee.findUnique({
+    where: { id },
+    select: { imageUrl: true },
+  });
+
   const imageFile = formData.get("imageFile") as File;
   let imageUrl = formData.get("imageUrl") as string;
 
   // Process file upload if exists
   if (imageFile && imageFile.size > 0) {
+    // Delete old image if exists
+    if (currentEmployee?.imageUrl) {
+      await deleteFile(currentEmployee.imageUrl);
+    }
     const savedPath = await saveFile(imageFile);
     if (savedPath) imageUrl = savedPath;
   }

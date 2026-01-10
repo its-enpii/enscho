@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { saveFile } from "@/lib/upload";
+import { saveFile, deleteFile } from "@/lib/upload";
 import { cookies } from "next/headers";
 
 export async function createPost(formData: FormData) {
@@ -70,6 +70,10 @@ export async function updatePost(id: string, formData: FormData) {
   let imageUrl = post.imageUrl || "";
 
   if (imageFile && imageFile.size > 0) {
+    // Delete old image if exists
+    if (post.imageUrl) {
+      await deleteFile(post.imageUrl);
+    }
     imageUrl = await saveFile(imageFile, "posts");
   }
 

@@ -17,9 +17,10 @@ export function LogoutButton({
 
   const handleLogout = async () => {
     const confirmed = await confirm({
-      title: "Keluar dari Sistem",
-      message: "Apakah Anda yakin ingin keluar dari sistem?",
-      confirmText: "Ya, Keluar",
+      title: "Konfirmasi Keluar",
+      message: "Apakah Anda yakin ingin keluar dari sesi ini?",
+      confirmText: "Keluar",
+      cancelText: "Batal",
       variant: "danger",
     });
 

@@ -12,6 +12,7 @@ model User {
   email     String   @unique
   password  String
   name      String?
+  image     String?
   role      Role     @default(STUDENT)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -35,13 +36,11 @@ model SchoolConfig {
   phone       String?
   email       String?
   address     String?  @db.Text
-  facebook    String? // Deprecated
-  instagram   String? // Deprecated
-  youtube     String? // Deprecated
-  tiktok      String? // Deprecated
+
   socialMedia Json?   // New flexible configuration
   
-  logoUrl     String? // For site logo
+  logoUrl     String? // Full logo with text (for navbar, main branding)
+  logoIconUrl String? // Logo icon only (for favicon, footer, compact spaces)
   slogan      String? // For website title (Name - Slogan)
   footerDescription String? @db.Text // Description shown in footer
   primaryColor String? @default("#2563eb") // Default to blue-600

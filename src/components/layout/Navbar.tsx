@@ -48,18 +48,20 @@ export function Navbar({
                 className="h-10 w-auto object-contain"
               />
             ) : (
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                {schoolName.charAt(0)}
-              </div>
+              <>
+                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                  {schoolName.charAt(0)}
+                </div>
+                <span
+                  className={clsx(
+                    "font-bold text-xl tracking-tight transition-colors",
+                    scrolled ? "text-slate-900" : "text-slate-900"
+                  )}
+                >
+                  {schoolName}
+                </span>
+              </>
             )}
-            <span
-              className={clsx(
-                "font-bold text-xl tracking-tight transition-colors",
-                scrolled ? "text-slate-900" : "text-slate-900"
-              )}
-            >
-              {schoolName}
-            </span>
           </Link>
 
           {/* Desktop Menu */}

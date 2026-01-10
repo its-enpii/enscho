@@ -1,25 +1,42 @@
-import fs from "node:fs/promises";
-import path from "node:path";
-import { v4 as uuidv4 } from "uuid";
+import { writeFile, mkdir, unlink } from "fs/promises";
+import path from "path";
 
 export async function saveFile(
   file: File,
   folder: string = "uploads"
 ): Promise<string> {
-  const arrayBuffer = await file.arrayBuffer();
-  const buffer = new Uint8Array(arrayBuffer);
+  if (!file || file.size === 0) return "";
 
-  const fileName = `${uuidv4()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "")}`;
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const ext = path.extname(file.name);
+  const filename = `${Date.now()}-${Math.random()
+    .toString(36)
+    .substring(7)}${ext}`;
+
   const uploadDir = path.join(process.cwd(), "public", "uploads", folder);
 
   try {
-    await fs.access(uploadDir);
-  } catch {
-    await fs.mkdir(uploadDir, { recursive: true });
+    await mkdir(uploadDir, { recursive: true });
+    const filePath = path.join(uploadDir, filename);
+    await writeFile(filePath, buffer);
+    return `/uploads/${folder}/${filename}`;
+  } catch (e) {
+    console.error("Error saving file:", e);
+    return "";
   }
+}
 
-  const filePath = path.join(uploadDir, fileName);
-  await fs.writeFile(filePath, buffer);
+export async function deleteFile(fileUrl: string | null): Promise<void> {
+  if (!fileUrl) return;
 
-  return `/uploads/${folder}/${fileName}`;
+  try {
+    // Remove leading slash and construct full path
+    const relativePath = fileUrl.startsWith("/") ? fileUrl.slice(1) : fileUrl;
+    const filePath = path.join(process.cwd(), "public", relativePath);
+    await unlink(filePath);
+    console.log("Deleted old file:", filePath);
+  } catch (e) {
+    // File might not exist, which is fine
+    console.log("Could not delete file (might not exist):", fileUrl);
+  }
 }

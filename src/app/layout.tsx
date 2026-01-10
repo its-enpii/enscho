@@ -15,11 +15,14 @@ export async function generateMetadata(): Promise<Metadata> {
     description: config.footerDescription || "Website resmi sekolah.",
     icons: {
       icon: [
-        { url: config.logoUrl || "/favicon.ico" },
-        { url: config.logoUrl || "/favicon.ico", sizes: "32x32" },
+        { url: config.logoIconUrl || config.logoUrl || "/favicon.ico" },
+        {
+          url: config.logoIconUrl || config.logoUrl || "/favicon.ico",
+          sizes: "32x32",
+        },
       ],
-      shortcut: config.logoUrl || "/favicon.ico",
-      apple: config.logoUrl || "/favicon.ico",
+      shortcut: config.logoIconUrl || config.logoUrl || "/favicon.ico",
+      apple: config.logoIconUrl || config.logoUrl || "/favicon.ico",
     },
   };
 }

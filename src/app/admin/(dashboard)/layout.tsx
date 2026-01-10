@@ -5,6 +5,7 @@ import { DashboardShell } from "@/components/layout/DashboardShell";
 import { ToastProvider } from "@/components/ui/ToastProvider";
 import { ConfirmDialogProvider } from "@/components/ui/ConfirmDialog";
 import { Role } from "@prisma/client";
+import { getSchoolConfig } from "@/services/school";
 
 export default async function AdminLayout({
   children,
@@ -22,7 +23,7 @@ export default async function AdminLayout({
     const [userId, role] = session.split(":");
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { name: true, role: true },
+      select: { name: true, role: true, image: true },
     });
     if (user) {
       userRole = user.role;
@@ -32,12 +33,30 @@ export default async function AdminLayout({
     redirect("/admin/login");
   }
 
+  const schoolConfig = await getSchoolConfig();
+
+  // Fetch 5 recent posts for notifications
+  const recentPosts = await prisma.post.findMany({
+    where: { published: true },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+    select: {
+      id: true,
+      title: true,
+      category: true,
+      createdAt: true,
+      slug: true,
+    },
+  });
+
   return (
     <ToastProvider>
       <ConfirmDialogProvider>
         <DashboardShell
           user={{ name: userName, email: "", role: userRole }}
           schoolName="SMK Enscho"
+          logoUrl={schoolConfig.logoUrl}
+          recentPosts={recentPosts}
         >
           {children}
         </DashboardShell>

@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { saveFile } from "@/lib/upload";
+import { saveFile, deleteFile } from "@/lib/upload";
 
 export async function deletePartner(id: string) {
   try {
@@ -48,6 +48,10 @@ export async function updatePartner(id: string, formData: FormData) {
   let logoUrl = currentPartner.logoUrl;
 
   if (imageFile && imageFile.size > 0) {
+    // Delete old logo if exists
+    if (currentPartner.logoUrl) {
+      await deleteFile(currentPartner.logoUrl);
+    }
     logoUrl = await saveFile(imageFile, "partners");
   }
 

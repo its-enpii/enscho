@@ -104,11 +104,6 @@ export function TopBar({ schoolInfo }: TopBarProps) {
               </Link>
             </div>
           </div>
-          <div className="border-l border-slate-700 pl-4">
-            <span className="text-xs font-semibold bg-slate-800 px-2 py-1 rounded">
-              ID
-            </span>
-          </div>
         </div>
       </div>
     </div>

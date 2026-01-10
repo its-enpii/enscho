@@ -12,18 +12,6 @@ export async function getSchoolConfig() {
     // Parse JSON if needed (although Prisma handles Json type automatically)
     const socialMedia = (config.socialMedia as any[]) || [];
 
-    // Merge old fields if socialMedia is empty (migration fallback)
-    if (socialMedia.length === 0) {
-      if (config.facebook)
-        socialMedia.push({ platform: "Facebook", url: config.facebook });
-      if (config.instagram)
-        socialMedia.push({ platform: "Instagram", url: config.instagram });
-      if (config.youtube)
-        socialMedia.push({ platform: "YouTube", url: config.youtube });
-      if (config.tiktok)
-        socialMedia.push({ platform: "TikTok", url: config.tiktok });
-    }
-
     return {
       name: config.name,
       slogan: config.slogan,
@@ -40,6 +28,7 @@ export async function getSchoolConfig() {
       address: config.address || DEFAULT_INFO.address,
       socialMedia: socialMedia,
       logoUrl: config.logoUrl,
+      logoIconUrl: config.logoIconUrl,
 
       // Keep 'socials' for backward compatibility check if needed, but we should switch fully.
       socials: {

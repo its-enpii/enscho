@@ -30,16 +30,7 @@ export default function ConfigForm({ initialData, action }: ConfigFormProps) {
     if (Array.isArray(initialData.socialMedia)) {
       return initialData.socialMedia;
     }
-    const oldSocials = [];
-    if (initialData.facebook)
-      oldSocials.push({ platform: "Facebook", url: initialData.facebook });
-    if (initialData.instagram)
-      oldSocials.push({ platform: "Instagram", url: initialData.instagram });
-    if (initialData.youtube)
-      oldSocials.push({ platform: "YouTube", url: initialData.youtube });
-    if (initialData.tiktok)
-      oldSocials.push({ platform: "TikTok", url: initialData.tiktok });
-    return oldSocials;
+    return [];
   });
 
   const addSocial = () => {
@@ -66,11 +57,24 @@ export default function ConfigForm({ initialData, action }: ConfigFormProps) {
     initialData.logoUrl || null
   );
 
+  const [logoIconPreview, setLogoIconPreview] = useState<string | null>(
+    initialData.logoIconUrl || null
+  );
+
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const previewUrl = URL.createObjectURL(file);
       setLogoPreview(previewUrl);
+      return () => URL.revokeObjectURL(previewUrl);
+    }
+  };
+
+  const handleLogoIconChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setLogoIconPreview(previewUrl);
       return () => URL.revokeObjectURL(previewUrl);
     }
   };
@@ -172,7 +176,7 @@ export default function ConfigForm({ initialData, action }: ConfigFormProps) {
 
             <div>
               <label className="block text-sm font-semibold text-slate-900 mb-4">
-                Logo Sekolah
+                Logo Sekolah (dengan Teks)
               </label>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
                 <div className="relative w-32 h-32 bg-slate-100 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden group shadow-inner">
@@ -225,10 +229,74 @@ export default function ConfigForm({ initialData, action }: ConfigFormProps) {
                     )}
                   </div>
                   <p className="text-xs text-slate-500 leading-relaxed">
-                    Format: **PNG** (disarankan untuk background transparan)
-                    atau **JPG**.
+                    Logo lengkap dengan teks untuk navbar dan branding utama.
                     <br />
-                    Ukuran maksimal **2MB**.
+                    Format: **PNG** (disarankan) atau **JPG**. Ukuran maksimal
+                    **2MB**.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-slate-900 mb-4">
+                Logo Icon (Simbol Saja)
+              </label>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                <div className="relative w-32 h-32 bg-slate-100 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center overflow-hidden group shadow-inner">
+                  <div
+                    className="absolute inset-0 opacity-10"
+                    style={{
+                      backgroundImage:
+                        "conic-gradient(#000 0.25turn, #fff 0.25turn 0.5turn, #000 0.5turn 0.75turn, #fff 0.75turn)",
+                      backgroundSize: "20px 20px",
+                    }}
+                  ></div>
+
+                  {logoIconPreview ? (
+                    <img
+                      key={logoIconPreview}
+                      src={logoIconPreview}
+                      alt="Logo Icon Preview"
+                      className="relative z-10 max-w-full max-h-full object-contain p-4 transition-transform group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="relative z-10 text-center p-4">
+                      <span className="text-xs text-slate-400 font-medium">
+                        Belum ada icon
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex-1 space-y-3">
+                  <div className="flex flex-col gap-2">
+                    <input
+                      type="file"
+                      name="logoIcon"
+                      id="logo-icon-upload"
+                      accept="image/*"
+                      onChange={handleLogoIconChange}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="logo-icon-upload"
+                      className="inline-flex items-center justify-center px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer transition-colors shadow-sm"
+                    >
+                      Pilih Logo Icon Baru
+                    </label>
+
+                    {initialData.logoIconUrl && (
+                      <p className="text-[10px] text-slate-400 break-all max-w-xs">
+                        File saat ini: {initialData.logoIconUrl}
+                      </p>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Icon/simbol saja untuk favicon, footer, dan tampilan kompak.
+                    <br />
+                    Format: **PNG** dengan background transparan. Ukuran
+                    maksimal **2MB**.
                   </p>
                 </div>
               </div>

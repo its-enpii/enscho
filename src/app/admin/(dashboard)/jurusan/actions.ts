@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { saveFile } from "@/lib/upload";
+import { saveFile, deleteFile } from "@/lib/upload";
 import { cookies } from "next/headers";
 
 export async function createMajor(formData: FormData) {
@@ -82,6 +82,10 @@ export async function updateMajor(id: string, formData: FormData) {
   let imageUrl = major.imageUrl || "";
 
   if (imageFile && imageFile.size > 0) {
+    // Delete old image if exists
+    if (major.imageUrl) {
+      await deleteFile(major.imageUrl);
+    }
     imageUrl = await saveFile(imageFile, "jurusan");
   }
 

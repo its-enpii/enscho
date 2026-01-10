@@ -20,11 +20,33 @@ export default async function AdminConfigPage() {
     }
 
     // Handle File Uploads
-    const saveFile = (await import("@/lib/file-upload")).saveFile; // Dynamic import to avoid server/client issues if any, or just standard import
+    const { saveFile, deleteFile } = await import("@/lib/file-upload");
+
+    // Get current config to check for existing files
+    const currentConfig = await prisma.schoolConfig.findUnique({
+      where: { id: "config" },
+      select: { logoUrl: true, logoIconUrl: true },
+    });
 
     const logoFile = formData.get("logo") as File;
-    const logoUrl = await saveFile(logoFile, "config");
-    // const bannerUrl = await saveFile(bannerFile, "config");
+    let logoUrl = null;
+    if (logoFile && logoFile.size > 0) {
+      // Delete old logo if exists
+      if (currentConfig?.logoUrl) {
+        await deleteFile(currentConfig.logoUrl);
+      }
+      logoUrl = await saveFile(logoFile, "config");
+    }
+
+    const logoIconFile = formData.get("logoIcon") as File;
+    let logoIconUrl = null;
+    if (logoIconFile && logoIconFile.size > 0) {
+      // Delete old logo icon if exists
+      if (currentConfig?.logoIconUrl) {
+        await deleteFile(currentConfig.logoIconUrl);
+      }
+      logoIconUrl = await saveFile(logoIconFile, "config");
+    }
 
     const updateData: any = {
       name: formData.get("name") as string,
@@ -44,6 +66,7 @@ export default async function AdminConfigPage() {
     };
 
     if (logoUrl) updateData.logoUrl = logoUrl;
+    if (logoIconUrl) updateData.logoIconUrl = logoIconUrl;
 
     await prisma.schoolConfig.upsert({
       where: { id: "config" },

@@ -4,8 +4,19 @@ import { Plus, Shield, User as UserIcon } from "lucide-react";
 import Link from "next/link";
 import UserTable from "./_components/UserTable";
 
+import { cookies } from "next/headers";
+
 export default async function AdminUsersPage() {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
+  const [currentUserId] = session ? session.split(":") : [""];
+
   const users = await prisma.user.findMany({
+    where: {
+      id: {
+        not: currentUserId,
+      },
+    },
     orderBy: { createdAt: "desc" },
     select: {
       id: true,
