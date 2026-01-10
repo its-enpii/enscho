@@ -57,6 +57,49 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Fix input text color - ensure it's dark, not gray */
+input,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="url"],
+textarea,
+select {
+  color: #0f172a !important; /* slate-900 - dark text */
+  -webkit-text-fill-color: #0f172a !important; /* For Safari */
+  border-color: #e2e8f0 !important; /* slate-200 - light gray border */
+}
+
+/* Override focus ring to use primary theme color instead of blue */
+input:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="url"]:focus,
+textarea:focus,
+select:focus {
+  outline: none !important;
+  border-color: var(--primary-600) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-600) 20%, transparent) !important;
+}
+
+/* Ensure placeholder stays gray */
+input::placeholder,
+textarea::placeholder {
+  color: #94a3b8 !important; /* slate-400 for placeholder */
+  -webkit-text-fill-color: #94a3b8 !important;
+}
+
+/* Ensure autofill doesn't change text color */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #0f172a !important;
+}
+
 /* Toast Animation */
 @keyframes slide-in-right {
   from {
@@ -172,48 +215,7 @@ body {
   line-height: 1.25;
 }
 
-/* Global Form Input Styles - Minimal to avoid conflicts with Tailwind */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-input[type="url"],
-input[type="tel"],
-input[type="search"],
-input[type="date"],
-input[type="time"],
-input[type="datetime-local"],
-select,
-textarea {
-  color: #111827 !important; /* gray-900 - dark text */
-  background-color: #ffffff !important; /* white background */
-  border-color: #d1d5db !important; /* gray-300 border */
-  /* Let Tailwind handle: padding, border-radius, font-size, etc */
-}
-
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-input[type="number"]:focus,
-input[type="url"]:focus,
-input[type="tel"]:focus,
-input[type="search"]:focus,
-input[type="date"]:focus,
-input[type="time"]:focus,
-input[type="datetime-local"]:focus,
-select:focus,
-textarea:focus {
-  outline: none !important;
-  border-color: #3b82f6 !important; /* blue-500 */
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: #9ca3af !important; /* gray-400 */
-  opacity: 1;
-}
-
+/* Disabled input styles */
 input:disabled,
 select:disabled,
 textarea:disabled {
