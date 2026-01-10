@@ -116,14 +116,18 @@ export default async function AkademikPage() {
         {/* Info Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2 space-y-8">
-            <section className="bg-white p-8 rounded-2xl border border-slate-200">
+            <section className="bg-white p-8 rounded-2xl border border-slate-200 relative">
               <h2 className="text-2xl font-bold text-slate-900 mb-6">
                 Program Unggulan
               </h2>
-              <div className="prose prose-slate max-w-none text-slate-600">
+              <div
+                className="prose prose-slate max-w-none text-slate-600 hyphens-none"
+                style={{ hyphens: "none", WebkitHyphens: "none" }}
+              >
                 {pageContent ? (
                   <div
                     dangerouslySetInnerHTML={{ __html: pageContent.content }}
+                    style={{ hyphens: "none", WebkitHyphens: "none" }}
                   />
                 ) : (
                   <>

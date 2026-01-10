@@ -114,12 +114,16 @@ body {
 }
 
 /* Robust Rich Text Styles to Fix Overflow and Spacing */
-.prose {
+.prose,
+.prose * {
   max-width: 100%;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
-  hyphens: auto;
+  overflow-wrap: normal; /* Don't break words */
+  word-wrap: normal; /* Don't break words */
+  word-break: normal; /* text should break at spaces only */
+  hyphens: none !important; /* Force disable hyphenation */
+  -webkit-hyphens: none !important;
+  -moz-hyphens: none !important;
+  -ms-hyphens: none !important;
 }
 
 .prose p,
@@ -127,7 +131,7 @@ body {
   margin-bottom: 1.25em; /* Fix for "auto enter" spacing */
   line-height: 1.75;
   white-space: normal !important;
-  overflow-wrap: break-word !important;
+  overflow-wrap: normal !important; /* Don't break words */
 }
 
 .prose img,
