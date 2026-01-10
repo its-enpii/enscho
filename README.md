@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Enscho - School Management System
+
+**Enscho** is a comprehensive web-based school management system designed to streamline administrative tasks, enhance communication between stakeholders, and provide a modern digital presence for educational institutions.
+
+## Overview
+
+This project serves as a complete solution for school management, featuring a public-facing website, a robust admin panel for staff, and dedicated portals for students and alumni. It leverages modern web technologies to ensure performance, scalability, and a superior user experience.
+
+## Features
+
+- **Public Website:** A responsive and dynamic landing page showcasing school information, news, and events.
+- **Admin Dashboard:** A powerful control panel for administrators to manage students, staff, academic records, and site content.
+- **Student Dashboard:** A personalized space for students to view grades, schedules, and announcements.
+- **Alumni Portal:** A dedicated section for alumni to stay connected and view relevant updates.
+- **PDF Reporting:** Automated generation of academic reports and documents using `@react-pdf/renderer`.
+- **Media Management:** Efficient handling of uploads and media assets.
+
+## Technology Stack
+
+This project is built using the following technologies:
+
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Database:** [PostgreSQL](https://www.postgresql.org/) (via [Prisma ORM](https://www.prisma.io/))
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
+- **Authentication:** Custom implementation (using `bcryptjs` for security)
+- **UI Components:** [Lucide React](https://lucide.dev/), [Framer Motion](https://www.framer.com/motion/)
+- **Form Handling:** `react-hook-form` with `zod` validation
 
 ## Getting Started
 
-First, run the development server:
+Follow these steps to set up the project locally.
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (Latest LTS recommended)
+- A database instance (PostgreSQL recommended)
+
+### Installation
+
+1.  **Clone the repository:**
+
+    ```bash
+    git clone <repository-url>
+    cd enscho
+    ```
+
+2.  **Install dependencies:**
+
+    ```bash
+    npm install
+    # or
+    yarn install
+    # or
+    pnpm install
+    ```
+
+3.  **Environment Setup:**
+    Create a `.env` file in the root directory and configure your environment variables (refer to `.env.example` if available, or set up your database URL).
+
+    ```env
+    DATABASE_URL="postgresql://user:password@localhost:5432/enscho?schema=public"
+    ```
+
+4.  **Database Setup:**
+    Run the Prisma migrations to set up your database schema.
+
+    ```bash
+    npx prisma migrate dev
+    # or for rapid prototyping
+    npx prisma db push
+    ```
+
+5.  **Seed Database (Optional):**
+    If the project includes a seed script, you can populate the database with initial data.
+    ```bash
+    npx prisma db seed
+    ```
+
+### Running the Development Server
+
+Start the local development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `src/app`: Contains the application routes and page logic (App Router).
+- `src/components`: Reusable UI components.
+- `src/lib`: Utility functions, database clients (Prisma), and shared constants.
+- `src/actions`: Server actions for handling data mutations.
+- `src/admin`: Admin panel specific components and logic.
 
-## Learn More
+## Deployment
 
-To learn more about Next.js, take a look at the following resources:
+To deploy the application to a production environment:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1.  **Build the application:**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    ```bash
+    npm run build
+    ```
 
-## Deploy on Vercel
+    This command compiles the TypeScript code and optimizes the application for production.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2.  **Start the production server:**
+    ```bash
+    npm run start
+    ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Hosting Options
+
+- **Vercel:** The recommended platform for Next.js apps. Zero-configuration deployment.
+- **VPS/Docker:** You can containerize the application using Docker or run it on a VPS using a process manager like PM2. Ensure your `DATABASE_URL` is correctly pointed to your production database.
