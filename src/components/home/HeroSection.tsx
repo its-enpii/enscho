@@ -124,14 +124,14 @@ export function HeroSection({ slides }: HeroSectionProps) {
                   initial="hidden"
                   animate="visible"
                   exit="exit"
-                  className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[1.1] tracking-tight drop-shadow-lg"
+                  className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tight drop-shadow-lg max-w-3xl"
                 >
                   {currentSlide.title?.split(" ").map((word, i) => (
                     <span
                       key={i}
                       className={
-                        i % 3 === 0 && i !== 0
-                          ? "text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300"
+                        i % 2 === 0 && i !== 0
+                          ? "text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-cyan-300"
                           : ""
                       }
                     >

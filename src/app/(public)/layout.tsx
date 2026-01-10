@@ -14,56 +14,70 @@ export default async function PublicLayout({
 }) {
   const schoolConfig = await getSchoolConfig();
   const pages = await prisma.page.findMany({
-    select: { title: true, slug: true }
+    select: { title: true, slug: true },
   });
   const majors = await prisma.major.findMany({
-    select: { name: true, slug: true }
+    select: { name: true, slug: true },
   });
 
   // Construct dynamic menu
-  const menuItems = NAVIGATION_MENU.map(item => {
-      if (item.label === "Profil Sekolah") {
+  const menuItems = NAVIGATION_MENU.map((item) => {
+    if (item.label === "Profil Sekolah") {
       // Define hardcoded pages that always exist
-      const hardcodedPages = ['guru'];
-      
-      // Get all valid slugs (database pages + hardcoded)
-      const validSlugs = [...pages.map(p => p.slug), ...hardcodedPages];
+      const hardcodedPages = ["guru"];
 
-      // Filter pages that should NOT be in Profil menu manually (like home/akademik-landing)
+      // Get all valid slugs (database pages + hardcoded)
+      const validSlugs = [...pages.map((p) => p.slug), ...hardcodedPages];
+
+      // Filter pages that should NOT be in Profil menu manually
       // AND ensure dynamic pages from DB are added
-      const dynamicPagesToAdd = pages.filter(p => !['akademik-landing', 'home'].includes(p.slug));
-      
+      const excludedSlugs = [
+        "akademik-landing",
+        "home",
+        "kurikulum",
+        "ekskul",
+        "kalender",
+        "fasilitas",
+      ];
+      const dynamicPagesToAdd = pages.filter(
+        (p) => !excludedSlugs.includes(p.slug)
+      );
+
       // Start with the static menu items defined in constants (which have specific labels)
       // But only keep those that actually exist (either hardcoded or in DB)
-      const existingChildrenFiltered = (item.children || []).filter(child => {
-         const slug = child.href.split('/').pop() || "";
-         return validSlugs.includes(slug);
+      const existingChildrenFiltered = (item.children || []).filter((child) => {
+        const slug = child.href.split("/").pop() || "";
+        return validSlugs.includes(slug);
       });
 
       // Find which slugs are already covered
-      const coveredSlugs = existingChildrenFiltered.map(c => c.href.split('/').pop());
+      const coveredSlugs = existingChildrenFiltered.map((c) =>
+        c.href.split("/").pop()
+      );
 
       // Filter dynamic pages to only include those NOT already covered
-      const newPages = dynamicPagesToAdd.filter(p => !coveredSlugs.includes(p.slug));
+      const newPages = dynamicPagesToAdd.filter(
+        (p) => !coveredSlugs.includes(p.slug)
+      );
 
       return {
         ...item,
         children: [
-            ...existingChildrenFiltered,
-            ...newPages.map(page => ({
-                label: page.title,
-                href: `/profil/${page.slug}`
-            }))
-        ]
+          ...existingChildrenFiltered,
+          ...newPages.map((page) => ({
+            label: page.title,
+            href: `/profil/${page.slug}`,
+          })),
+        ],
       };
     }
     if (item.label === "Kompetensi Keahlian") {
       return {
         ...item,
-        children: majors.map(major => ({
+        children: majors.map((major) => ({
           label: major.name,
-          href: `/jurusan/${major.slug}`
-        }))
+          href: `/jurusan/${major.slug}`,
+        })),
       };
     }
     return item;
@@ -72,10 +86,12 @@ export default async function PublicLayout({
   return (
     <>
       <TopBar schoolInfo={schoolConfig} />
-      <Navbar schoolName={schoolConfig.name} logoUrl={schoolConfig.logoUrl} menuItems={menuItems} />
-      <main className="min-h-screen bg-white">
-          {children}
-      </main>
+      <Navbar
+        schoolName={schoolConfig.name}
+        logoUrl={schoolConfig.logoUrl}
+        menuItems={menuItems}
+      />
+      <main className="min-h-screen bg-white">{children}</main>
       <Footer schoolInfo={schoolConfig} majors={majors} />
     </>
   );

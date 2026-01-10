@@ -1,9 +1,18 @@
 "use client";
 
-import { useState } from "react";
-import { Search, ChevronLeft, ChevronRight, Building2 } from "lucide-react";
+import { useState, useTransition } from "react";
+import {
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  Building2,
+  Trash,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useConfirm } from "@/components/ui/ConfirmDialog";
+import { useToast } from "@/components/ui/ToastProvider";
+import { useRouter } from "next/navigation";
 
 interface Partner {
   id: string;
@@ -24,6 +33,11 @@ export default function PartnersTable({
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  const [isPending, startTransition] = useTransition();
+  const { confirm } = useConfirm();
+  const { showSuccess, showError } = useToast();
+  const router = useRouter();
 
   const filteredPartners = partners.filter((p) =>
     p.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -168,29 +182,31 @@ export default function PartnersTable({
                         </Link>
                         <button
                           onClick={async () => {
-                            if (
-                              confirm(
-                                `Yakin ingin menghapus "${partner.name}"?`
-                              )
-                            ) {
-                              await onDelete(partner.id);
+                            const isConfirmed = await confirm({
+                              title: "Hapus Mitra",
+                              message: `Apakah Anda yakin ingin menghapus "${partner.name}"? Data yang dihapus tidak dapat dikembalikan.`,
+                              confirmText: "Ya, Hapus",
+                              variant: "danger",
+                            });
+
+                            if (isConfirmed) {
+                              startTransition(async () => {
+                                const result = await onDelete(partner.id);
+                                if (result.success) {
+                                  showSuccess("Data mitra berhasil dihapus");
+                                  router.refresh();
+                                } else {
+                                  showError(
+                                    result.error || "Gagal menghapus data"
+                                  );
+                                }
+                              });
                             }
                           }}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          disabled={isPending}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                         >
-                          <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
+                          <Trash size={16} />
                         </button>
                       </div>
                     </td>

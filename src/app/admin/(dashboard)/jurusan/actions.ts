@@ -111,3 +111,55 @@ export async function updateMajor(id: string, formData: FormData) {
     return { error: "Gagal memperbarui jurusan" };
   }
 }
+
+export async function deleteMajor(id: string) {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
+  const adminSession = cookieStore.get("admin_session")?.value;
+
+  if (!session && !adminSession) {
+    return { error: "Unauthorized" };
+  }
+
+  const [currentUserId, currentRole] = session
+    ? session.split(":")
+    : ["", "ADMIN"];
+
+  const canManageAll =
+    currentRole === "ADMIN" ||
+    currentRole === "TEACHER" || // Assuming Teachers can manage too
+    currentRole === "ALUMNI" ||
+    !!adminSession;
+
+  try {
+    const major = await prisma.major.findUnique({
+      where: { id },
+      select: { authorId: true, imageUrl: true },
+    });
+
+    if (!major) {
+      return { success: false, error: "Jurusan tidak ditemukan" };
+    }
+
+    if (!canManageAll && major.authorId !== currentUserId) {
+      return {
+        success: false,
+        error: "Anda tidak memiliki izin untuk menghapus jurusan ini",
+      };
+    }
+
+    // Delete image if exists
+    if (major.imageUrl) {
+      await deleteFile(major.imageUrl);
+    }
+
+    await prisma.major.delete({ where: { id } });
+
+    revalidatePath("/", "layout");
+    revalidatePath("/admin/jurusan");
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting major:", error);
+    return { success: false, error: "Gagal menghapus jurusan" };
+  }
+}

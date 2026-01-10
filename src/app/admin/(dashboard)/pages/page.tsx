@@ -22,7 +22,13 @@ export default async function AdminPagesList() {
   const pages = await prisma.page.findMany({
     where: {
       slug: {
-        notIn: ["akademik-landing"],
+        notIn: [
+          "akademik-landing",
+          "kurikulum",
+          "ekskul",
+          "kalender",
+          "fasilitas",
+        ],
       },
     },
     select: {

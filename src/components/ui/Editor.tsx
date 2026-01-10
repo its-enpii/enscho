@@ -78,8 +78,17 @@ export default function Editor({
       disableMedia ? ["link"] : ["link", "image", "video"], // Conditionally remove image/video
       ["clean"],
     ],
+    clipboard: {
+      matchVisual: false,
+    },
     blotFormatter: {}, // Enable BlotFormatter
   };
+
+  /*
+   * FIX: Do not aggressively replace in onChange to prevent "Maximum update depth exceeded" loop.
+   * Instead, we sanitize the value passed to the hidden input, which is what gets submitted to the server.
+   */
+  const cleanValue = value.replace(/&nbsp;/g, " ").replace(/\u00a0/g, " ");
 
   return (
     <div className="mb-6">
@@ -95,8 +104,8 @@ export default function Editor({
           onChange={setValue}
           modules={modules}
         />
-        {/* Hidden input to pass value to Server Action */}
-        <input type="hidden" name={name} value={value} />
+        {/* Hidden input to pass SANITIZED value to Server Action */}
+        <input type="hidden" name={name} value={cleanValue} />
       </div>
     </div>
   );

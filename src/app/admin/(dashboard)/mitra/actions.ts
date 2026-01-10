@@ -25,18 +25,22 @@ export async function createPartner(formData: FormData) {
     logoUrl = await saveFile(imageFile, "partners");
   }
 
-  await prisma.partner.create({
-    data: {
-      name: formData.get("name") as string,
-      website: formData.get("website") as string,
-      logoUrl,
-    },
-  });
+  try {
+    await prisma.partner.create({
+      data: {
+        name: formData.get("name") as string,
+        website: formData.get("website") as string,
+        logoUrl,
+      },
+    });
 
-  revalidatePath("/admin/mitra");
-  revalidatePath("/hubin/mitra");
-  // redirect("/admin/mitra");
-  return { success: true };
+    revalidatePath("/admin/mitra");
+    revalidatePath("/hubin/mitra");
+    return { success: true };
+  } catch (error) {
+    console.error("Error creating partner:", error);
+    return { success: false, error: "Gagal membuat mitra baru" };
+  }
 }
 
 export async function updatePartner(id: string, formData: FormData) {
@@ -55,17 +59,21 @@ export async function updatePartner(id: string, formData: FormData) {
     logoUrl = await saveFile(imageFile, "partners");
   }
 
-  await prisma.partner.update({
-    where: { id },
-    data: {
-      name: formData.get("name") as string,
-      website: formData.get("website") as string,
-      logoUrl,
-    },
-  });
+  try {
+    await prisma.partner.update({
+      where: { id },
+      data: {
+        name: formData.get("name") as string,
+        website: formData.get("website") as string,
+        logoUrl,
+      },
+    });
 
-  revalidatePath("/admin/mitra");
-  revalidatePath("/hubin/mitra");
-  // redirect("/admin/mitra");
-  return { success: true };
+    revalidatePath("/admin/mitra");
+    revalidatePath("/hubin/mitra");
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating partner:", error);
+    return { success: false, error: "Gagal memperbarui data mitra" };
+  }
 }

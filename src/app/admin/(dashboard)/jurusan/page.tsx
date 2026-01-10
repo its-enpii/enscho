@@ -1,9 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { Plus, Pencil } from "lucide-react";
 import Link from "next/link";
-import { revalidatePath } from "next/cache";
 import { DeleteButton } from "../../components/DeleteButton";
 import { cookies } from "next/headers";
+import { deleteMajor } from "./actions";
 
 export default async function AdminMajorsPage() {
   const cookieStore = await cookies();
@@ -35,26 +35,6 @@ export default async function AdminMajorsPage() {
     currentRole === "TEACHER" ||
     currentRole === "ALUMNI" ||
     !!adminSession;
-
-  async function deleteMajor(formData: FormData) {
-    "use server";
-    const id = formData.get("id") as string;
-
-    // Authorization check
-    const majorToDelete = await prisma.major.findUnique({
-      where: { id },
-      select: { authorId: true },
-    });
-
-    if (!majorToDelete) throw new Error("Major not found");
-
-    if (!canManageAll && majorToDelete.authorId !== currentUserId) {
-      throw new Error("You do not have permission to delete this major");
-    }
-
-    await prisma.major.delete({ where: { id } });
-    revalidatePath("/", "layout");
-  }
 
   return (
     <div>
@@ -116,10 +96,7 @@ export default async function AdminMajorsPage() {
                           >
                             <Pencil size={18} />
                           </Link>
-                          <form action={deleteMajor}>
-                            <input type="hidden" name="id" value={major.id} />
-                            <DeleteButton />
-                          </form>
+                          <DeleteButton id={major.id} onDelete={deleteMajor} />
                         </>
                       ) : (
                         <span className="text-xs text-slate-400 font-medium px-2 py-1 bg-slate-50 rounded-md">
