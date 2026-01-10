@@ -5,7 +5,10 @@ import { Calendar, User } from "lucide-react";
 
 export default async function BeritaPage() {
   const posts = await prisma.post.findMany({
-    where: { published: true },
+    where: {
+      published: true,
+      category: { not: "loker" },
+    },
     orderBy: { createdAt: "desc" },
   });
 
