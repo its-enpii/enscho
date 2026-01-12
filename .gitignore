@@ -12,7 +12,7 @@
 
 # testing
 /coverage
-./public/uploads
+*/uploads/
 
 # next.js
 /.next/
